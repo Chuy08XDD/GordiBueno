@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia Simi - Sucursales</title>
+    <link rel="stylesheet" href="../../styles/components.css">
+</head>
+<body>
+<!-- Aquí se cargará el header -->
+    <div id="header-container"></div>
+
+<main class="sucursales-main">
+    <div class="sucursales-header">
+        <h1>Sucursales</h1>
+    </div>
+    
+    <div class="sucursales-instruction">
+        <p>Por favor seleccione la sucursal en la que trabaja</p>
+    </div>
+    
+    <div class="sucursales-container" id="sucursales-container">
+        <!-- Las sucursales se cargarán aquí cuando tenamos suicursales registradas en nuestra base de datos obvio -->
+    </div>
+</main>
+
+    <!-- Aquí se cargará el footer -->
+    <div id="footer-container"></div>
+
+    <!-- SCRIPT PARA CARGAR HEADER Y FOOTER -->
+    <script>
+    // Cargar header
+    fetch('../../../header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error cargando header:', error));
+    
+    // Cargar footer
+    fetch('../../../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error cargando footer:', error));
+    </script>
+
+    <!-- Script para inicializar el controlador  si asi es java -->
+    <script type="module">
+        import { SucursalController } from '../../controllers/SucursalController.js';
+        
+        // Esperar a que el DOM ¿que era el DOM CHICOS? (Document Object Modele) sté listo
+        //El DOM (Document Object Model) es la representación en memoria de tu página HTML.
+        // El navegador crea un árbol de objetos que representa cada elemento (etiquetas, texto, atributos) y permite que JavaScript 
+        // los lea y modifique.
+        //Imagina que el DOM es como un menú de restaurante:
+        //El HTML es la receta (qué ingredientes hay)
+        //El DOM es el menú organizado (qué platos puedes pedir)
+        //JavaScript es el mesero (puede leer el menú y traerte lo que pidas)
+
+        document.addEventListener('DOMContentLoaded', () => {
+            SucursalController.inicializar();
+        });
+    </script>
+
+</body>
+</html>
+

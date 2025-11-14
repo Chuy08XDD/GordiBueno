@@ -1,0 +1,448 @@
+/* HEADER STYLES 
+voy por mi paleta de colores 
+#16C1C8(azul turquesa)
+#49CCCC(azul cyan o cielito)
+#7CD7CF(azul claro)
+#AEE1D3(azul aqua)
+#E1ECD6(palido xd)
+GRACIAS 
+*/
+/* globales*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #E1ECD6;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/*header */
+#header-container {
+    position: relative;
+    width: 100%;
+    z-index: 100;
+}
+
+.header {
+    background: #ffffff;
+    border-bottom: 1px solid #E1ECD6;
+    padding: 0;
+    width: 100%;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 20px 60px;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-section .logo {
+    display: block;
+    width: 50px;
+    height: 50px;
+    background: #16C1C8;
+    border-radius: 8px;
+    transition: opacity 0.2s ease;
+}
+
+.logo-section .logo:hover {
+    opacity: 0.8;
+}
+
+.logo-img{
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    margin: 2px;
+}
+
+.namesimi {
+    font-size: 1.8em;
+    color: #16C1C8;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+.welcome {
+    margin-left: auto;
+    padding: 12px 24px;
+    background: #E1ECD6;
+    border-radius: 8px;
+    text-align: right;
+}
+
+.text-welcome {
+    font-size: 1em;
+    color: #16C1C8;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.info {
+    font-size: 0.85em;
+    color: #49CCCC;
+    font-weight: 400;
+}
+/*footer alo */
+#footer-container {
+    position: relative;
+    width: 100%;
+    z-index: 100;
+}
+
+.footer {
+    background: #ffffff;
+    padding: 40px 20px;
+    border-top: 1px solid #E1ECD6;
+    width: 100%;
+}
+
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-container p {
+    color: #49CCCC;
+    font-size: 0.95em;
+    font-weight: 400;
+    line-height: 1.8;
+    margin: 8px 0;
+}
+
+.footer-container .footer-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #16C1C8;
+}
+
+.footer-container .footer-contact {
+    margin-top: 16px;
+    font-size: 0.9em;
+}
+
+.footer-container .footer-contact p {
+    margin: 6px 0;
+}
+
+.footer-container .footer-contact a {
+    color: #16C1C8;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-container .footer-contact a:hover {
+    color: #49CCCC;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/*main*/
+.main-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 200px);
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Hero section con carrusel de fondo */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 200px);
+    min-height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.welcome-box {
+    position: absolute;
+    left: 80px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    z-index: 10;
+    max-width: 650px;
+    background: rgba(225, 236, 214, 0.85);
+    padding: 60px 50px;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(22, 193, 200, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.welcome-box h1 {
+    font-size: 100px;
+    font-weight: 900;
+    line-height: 1;
+    color: #16C1C8;
+    margin: 0;
+    text-shadow: 0 4px 12px rgba(22, 193, 200, 0.3);
+    letter-spacing: -2px;
+}
+
+.subtitle {
+    font-size: 32px;
+    color: #49CCCC;
+    margin-bottom: 20px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.btn-sucursales {
+    display: inline-block;
+    background: #16C1C8;
+    color: white;
+    padding: 22px 50px;
+    font-size: 24px;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 30px rgba(22, 193, 200, 0.5);
+    align-self: flex-start;
+}
+
+.btn-sucursales:hover {
+    background: #49CCCC;
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(73, 204, 204, 0.6);
+}
+
+.btn-sucursales:active {
+    transform: translateY(-2px) scale(1.02);
+}
+
+/*carrusel - AHORA ES EL PROTAGONISTA */
+.carrusel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.carruselito {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0;
+    box-shadow: none;
+    background: #ffffff;
+}
+
+.carusel {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.carusel img {
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    filter: brightness(0.95) contrast(1.05);
+    background: #ffffff;
+}
+
+
+
+/*resposive*/
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        gap: 15px;
+    }
+    
+    .logo-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .namesimi {
+        font-size: 1.5em;
+        text-align: center;
+    }
+    
+    .welcome {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+        padding: 12px 20px;
+    }
+    
+    .hero-section {
+        min-height: 600px;
+        height: auto;
+    }
+    
+    .welcome-box {
+        position: relative;
+        left: auto;
+        top: auto;
+        transform: none;
+        margin: 40px 20px;
+        padding: 40px 30px;
+        max-width: 100%;
+    }
+    
+    .welcome-box h1 {
+        font-size: 3.5em;
+    }
+    
+    .welcome-box .subtitle {
+        font-size: 1.5em;
+    }
+    
+    .btn-sucursales {
+        padding: 18px 40px;
+        font-size: 20px;
+    }
+}
+
+/* Sucursales */
+.sucursales-main {
+    min-height: calc(100vh - 200px);
+    padding: 0;
+    background: #E1ECD6;
+}
+
+.sucursales-header {
+    background: #AEE1D3;
+    padding: 40px 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.sucursales-header h1 {
+    font-size: 3em;
+    font-weight: 700;
+    color: #16C1C8;
+    margin: 0;
+}
+
+.sucursales-instruction {
+    background: #AEE1D3;
+    padding: 30px 20px;
+    text-align: center;
+    width: 100%;
+}
+
+.sucursales-instruction p {
+    font-size: 1.5em;
+    font-weight: 600;
+    color: #16C1C8;
+    margin: 0;
+}
+
+.sucursales-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+
+.sucursal-card {
+    background: #7CD7CF;
+    padding: 30px 40px;
+    border-radius: 12px;
+    min-width: 250px;
+    flex: 1;
+    max-width: 300px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(22, 193, 200, 0.2);
+}
+
+.sucursal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    background: #49CCCC;
+}
+
+.sucursal-card p {
+    margin: 8px 0;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sucursal-id {
+    font-size: 1.3em;
+    font-weight: 700;
+    text-decoration: underline;
+    margin-bottom: 12px !important;
+}
+
+.sucursal-nombre {
+    font-size: 1.1em;
+    margin-bottom: 8px !important;
+}
+
+.sucursal-direccion {
+    font-size: 1em;
+    font-weight: 500;
+}
+
+/* Responsive para sucursales */
+@media (max-width: 768px) {
+    .sucursales-header h1 {
+        font-size: 2em;
+    }
+    
+    .sucursales-instruction p {
+        font-size: 1.2em;
+    }
+    
+    .sucursales-container {
+        padding: 0 20px;
+        gap: 20px;
+    }
+    
+    .sucursal-card {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}
+

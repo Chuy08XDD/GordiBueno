@@ -1,0 +1,56 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de configuración local
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencias
+node_modules/
+vendor/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Archivos de backup
+*.bak
+*.backup
+
+# Archivos de documentación temporal
+*.docx
+*.doc
+
+# Archivos de configuración sensibles
+config.local.js
+supabase.local.js
+supabase/.env
+supabase/config.js
+
+# Archivos compilados
+dist/
+build/
+*.min.js
+*.min.css
+
+# Archivos de prueba
+test-results/
+coverage/

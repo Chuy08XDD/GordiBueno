@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia Simi - Home</title>
+    <link rel="stylesheet" href="src/styles/components.css">
+</head>
+<body>
+<!-- Aquí se cargará el header -->
+    <div id="header-container"></div>
+<main class="main-content">
+    <div class="hero-section">
+<!-- Aqui empieza mi carrusel -->
+
+        <div class="carrusel-container">        
+            <div class="carruselito">
+                <div class="carusel">
+                    <img src="public/doc.jpg" alt="doc">
+                    <img src="public/doc1.jpg" alt="doc1">
+                    <img src="public/doc2.jpg" alt="doc2">
+                    <img src="public/doc3.jpg" alt="doc3">
+                </div>
+            </div>
+        </div>
+        
+        <div class="welcome-box">
+            <h1>Bienvenido</h1>
+            <p class="subtitle">Tu salud es nuestro compromiso</p>
+            <a href="src/views/sucursales/sucursales.html" class="btn-sucursales">Sucursales</a>
+        </div>
+    </div>
+</main>
+
+    <!-- Aquí se cargará el footer -->
+    <div id="footer-container"></div>
+
+    <!-- SCRIPT PARA CARGAR HEADER Y FOOTER no es tan facil como solo include y header esto debera de ser usado en cada vista quien dijo que java >:( -->
+    
+    <script>
+    // Cargar header
+    fetch('header.html')  // ← Cambio aquí
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error cargando header:', error));
+    
+    // Cargar footer
+    fetch('footer.html')  // ← Cambio aquí
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error cargando footer:', error));
+</script>
+    
+
+<!-- este script mueve al carrusel -->
+
+<script>
+    const carusel = document.querySelector('.carusel');
+    const images = document.querySelectorAll('.carusel img');
+
+    let index = 0;
+
+    function moverCarrusel() {
+        index++;
+        if (index >= images.length) index = 0;
+
+        carusel.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    setInterval(moverCarrusel, 3000); // cambia cada 3 segundos
+</script>
+
+</body>
+</html>
