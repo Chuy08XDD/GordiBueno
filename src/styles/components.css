@@ -880,12 +880,6 @@ body {
         text-align: center;
         color: #ffffff;
     }
-    .botones-medico {
-        display: flex;
-        justify-content: flex-end; /* Manda los botones a la derecha */
-        margin-top: -95px;
-        padding-right: 20px; /* Ajusta si quieres que estén más pegados o separados del borde */
-    }
     .botonregreso {
         margin: 10px;
         font-size: 18px; 
@@ -996,6 +990,18 @@ body {
         justify-content: center; /* Centra los botones */
         margin-top: 20px;
     }
+    .actualizar-paciente {
+        margin: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        background: #16C1C8;
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
     .cancelar-medico {
         margin: 10px;
         font-size: 18px;
@@ -1007,6 +1013,12 @@ body {
         border: none;
         cursor: pointer;
         transition: 0.3s;
+    }
+    .actualizar-paciente:hover{
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+        background: #49CCCC;
     }
     .agregar-medico:hover{
         transform: translateY(-5px);
@@ -1126,18 +1138,30 @@ body {
         text-align: center;
         color: #ffffff;
     }
-    .boton-medico {
-        display: flex;
-        justify-content: flex-end; /* Manda los botones a la derecha */
-        margin-top: -60px;
-        padding-right: 20px; /* Ajusta si quieres que estén más pegados o separados del borde */
-        }
     .boton-licencia {
         display: flex;
         justify-content: flex-end; /* Manda los botones a la derecha */
         margin-top: -70px;
         padding-right: 0px; /* Ajusta si quieres que estén más pegados o separados del borde */
-        }
+    }
+    .licencia-botones button {
+        margin: 10px;
+        font-size: 12px; 
+        font-weight: 600;
+        background: #16C1C8;
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .licencia-botones button:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+        background: #49CCCC;
+    }
     .boton-medico button, .boton-licencia button {
         margin: 10px;
         font-size: 18px;
@@ -1282,6 +1306,7 @@ body {
     }
     /* LICENCIAS DE MEDICOS */
     .licencia-medico {
+        justify-items: center;
         text-align: center;
         width: 40%;
         margin: 30px auto;
@@ -1326,6 +1351,10 @@ body {
         border-collapse: collapse;
         width: 100%;
         margin-top: 20px;
+    }
+    .tabla-pacientes h2 {
+        color: #16C1C8;
+        text-align: center;
     }
     .tabla-pacientes th,
     .tabla-pacientes td{
@@ -1375,13 +1404,15 @@ body {
     .eliminar-paciente:hover{
         background: #dd1717;
     }
-    .botones-paciente {
-        display: flex;
-        justify-content: flex-end; /* Manda los botones a la derecha */
-        margin-top: -65px;
-        padding-right: 20px; /* Ajusta si quieres que estén más pegados o separados del borde */
-    }
     /* AGREGAR PACIENTES */
+    .agregar-paciente-general {
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+    }
     .curp-paciente, .ine-paciente, .nombre-paciente, .direccion-paciente, .edad-paciente, .peso-paciente, .estatura-paciente, .descripcion-paciente {
         margin-bottom: 18px;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -1406,3 +1437,151 @@ body {
         box-shadow: 0 0 8px rgba(22, 193, 200, 0.3);
         outline: none;
     }
+    /* EDITAR PACIENTES */
+    .edit-curp-paciente, .edit-ine-paciente, .edit-nombre-paciente, .edit-direccion-paciente, .edit-edad-paciente, .edit-peso-paciente, .edit-estatura-paciente, .edit-descripcion-paciente {
+        margin-bottom: 18px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .edit-curp-paciente label, .edit-ine-paciente label, .edit-nombre-paciente label, .edit-direccion-paciente label, .edit-edad-paciente label, .edit-peso-paciente label, .edit-estatura-paciente label, .edit-descripcion-paciente label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #16C1C8;
+    }
+    .edit-curp-paciente input, .edit-ine-paciente input, .edit-nombre-paciente input, .edit-direccion-paciente input, .edit-edad-paciente input, .edit-peso-paciente input, .edit-estatura-paciente input, .edit-descripcion-paciente input {
+        width: 600px;
+        padding: 10px 14px;
+        border: 1px solid #cfcfcf;
+        border-radius: 10px;
+        font-size: 15px;
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .edit-curp-paciente input:focus, .edit-ine-paciente input:focus, .edit-nombre-paciente input:focus, .edit-direccion-paciente input:focus, .edit-edad-paciente input:focus, .edit-peso-paciente input:focus, .edit-estatura-paciente input:focus, .edit-descripcion-paciente input:focus {
+        border-color: #16C1C8;
+        box-shadow: 0 0 8px rgba(22, 193, 200, 0.3);
+        outline: none;
+    }
+
+
+    /* hacer una receta medico */
+.bienvenida-medico {
+    align-items: center;
+    background: #49CCCC;
+    color: #ffffff;
+    padding: 18px 25px;
+}
+
+.bienvenida-medico h2 {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.bienvenida-medico button {
+    background: #16C1C8;
+    color: var(--blanco);
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: .2s ease;
+}
+
+.bienvenida-medico button:hover {
+    background: var(--turquesa);
+    color: var(--blanco);
+    transform: translateY(-2px);
+}
+
+/* CONTENEDOR FORMULARIO */
+.contenido-medico {
+    margin-top: 25px;
+    background: var(--blanco);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* FORM */
+form h3 {
+    font-size: 20px;
+    margin-bottom: 18px;
+    color: var(--turquesa);
+    font-weight: 700;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 18px;
+    font-weight: 600;
+    color: var(--texto);
+    font-size: 15px;
+}
+
+input, select {
+    margin-top: 6px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    border: 2px solid var(--aqua);
+    outline: none;
+    background: var(--palido);
+    transition: .2s ease;
+    font-size: 15px;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--turquesa);
+    box-shadow: 0 0 0 3px rgba(22, 193, 200, 0.25);
+}
+
+/* BOTONES */
+
+
+.btn.primary {
+    background: var(--turquesa);
+    color: var(--blanco);
+    box-shadow: var(--shadow);
+}
+
+.btn.primary:hover {
+    background: var(--cyan);
+    transform: translateY(-2px);
+}
+
+.btn:hover {
+    background: var(--gris);
+}
+.mainn {
+    width: 95%;
+    max-width: 850px;
+    margin: 30px auto;
+}
+/* MOBILE */
+@media (max-width: 600px) {
+    .bienvenida-medico {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .btn, .bienvenida-medico button {
+        width: 100%;
+    }
+}
+/*estilos de cita-paciente*/
+.encabezado-paginapaciente{
+    align-items: center;
+    text-align: center;
+    background: #49CCCC;
+    color: #ffffff;
+    padding: 18px 25px;
+}
+.contenido-paciente {
+    margin-top: 25px;
+    background: var(--blanco);
+    padding: 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}

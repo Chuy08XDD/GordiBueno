@@ -12,7 +12,7 @@
         <!--header-->
         <div id="header-container"></div>
             <div class="medico-bienvenida">
-            <h1>Área de Personal Médico [id_sucursal]</h1>
+            <h1 id="titulo-area-medica">Área de Personal Médico [id_sucursal]</h1>
             <p>Bienvenido al área de personal médico.</p><br>
             <div class="botones-medico">
             <button class="botonregreso" onclick="location.href='../sucursales/bienvenido.html'">Regresar</button>
@@ -153,6 +153,13 @@
                 });
                 });
             }
+            window.addEventListener('DOMContentLoaded', () => {
+            const sucursalNombre = localStorage.getItem('sucursalNombre') || 'Sucursal';
+            const titulo = document.getElementById('titulo-area-medica');
+            if (titulo) {
+            titulo.textContent = `Área de Personal Médico ${sucursalNombre}`;
+            }
+            });
         </script>
     </body>
 </html>

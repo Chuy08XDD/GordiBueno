@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Editar Pacientes</title>
+        <link rel="stylesheet" href="../../styles/components.css">
+    </head>
+    <body>
+        <!--header-->
+        <div id="header-container"></div>
+        <main>
+            <section class="form-section">
+                <h2 id="titulo">EDITAR DATOS DEL PACIENTE [nombre_completo]</h2>
+                <div class="agregar-medico-general">
+                <form id="form-paciente">
+                    <!--No c *explota*-->
+                    <div class="edit-curp-paciente">
+                        <label for="curp">CURP:</label>
+                        <input type="text" id="curp" name="curp" value="[curp]" required>
+                    </div>
+                    <div class="edit-ine-paciente">
+                        <label for="ine">INE:</label>
+                        <input type="text" id="ine" name="ine" value="[ine]" required>
+                    </div>
+                    <div class="edit-nombre-paciente">
+                        <label for="nombre_completo">Nombre Completo:</label>
+                        <input type="text" id="nombre_completo" name="nombre_completo" value="[nombre_completo]" required>
+                    </div>
+                    <div class="edit-direccion-paciente">
+                        <label for="direccion">Dirección:</label>
+                        <input type="text" id="direccion" name="direccion" value="[direccion]" required>
+                    </div>
+                    <div class="edit-edad-paciente">
+                        <label for="edad">Edad:</label>
+                        <input type="number" id="edad" name="edad" value="" required>
+                    </div>
+                    <div class="edit-peso-paciente">
+                        <label for="peso">Peso (kg):</label>
+                        <input type="number" id="peso" name="peso" value="" required>
+                    </div>
+                    <div class="edit-estatura-paciente">
+                        <label for="estatura">Estatura (cm):</label>
+                        <input type="number" id="estatura" name="estatura" value="" required>
+                    <div class="edit-descripcion-paciente">
+                        <label for="descripcion_paciente">Descripción Médica:</label>
+                        <textarea id="descripcion_deestado" name="descripcion_deestado" value="[descripcion_deestado]" required></textarea>
+                    </div>
+                    <!--separacion jejejejfhiueftncyaily4wnla-->
+                        <div class="botones-medico">
+                        <button type="submit" class="actualizar-paciente">Guardar cambios</button>
+                        <button onclick="location.href='../Personal_Recepcion/pacientes.html'" class="cancelar-medico">Cancelar</button>
+                        </div>
+            </form>
+            </label></section>
+            </div>
+        </main>
+        <!--footer-->
+        <div id="footer-container"></div>
+        <script type="module">
+        //codigo para que guarde y en enseñe datos
+        import { PacienteController } from '../../controllers/PacienteController.js';
+        
+        //cargar codigo de medico que pasamos desde medicos
+         window.addEventListener('DOMContentLoaded', async () => {
+            const curp = localStorage.getItem('curp');
+            const nombre_completo = localStorage.getItem('nombre_completo');
+            const titulo = document.getElementById('titulo')
+            if(!curp){
+            console.error('no se encontro curp',error);
+            return;
+         }
+            if(titulo){
+                titulo.textContent = `EDITAR DATOS DEL PACIENTE: ${nombre_completo}`
+            }
+        
+         
+        //traer datos con controlador
+        const { paciente,error} = await PacienteController.obtenerPacientesporCurp(curp);
+        if(error){
+            console.log('fallo traer datos',error)
+            return{medico:null,error}
+        }
+        //para mis inputs del formulario
+        document.getElementById("curp").value = paciente.curp;
+        document.getElementById("ine").value = paciente.ine;
+        document.getElementById("nombre_completo").value = paciente.nombre_completo;
+        document.getElementById("direccion").value = paciente.direccion;
+        document.getElementById("edad").value = paciente.edad;
+        document.getElementById("peso").value = paciente.peso;
+        document.getElementById("estatura").value = paciente.estatura;
+        document.getElementById("descripcion_deestado").value = paciente.descripcion_deestado;
+        
+
+        //parte de mis botoncitos
+        const form = document.getElementById("form-paciente");
+        
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            //mi arreglo para guardar los nuevos datos
+            const pacienteActualizado = {
+                curp:form.curp.value,
+                ine: form.ine.value,
+                nombre_completo:form.nombre_completo.value,
+                direccion:form.direccion.value,
+                edad:form.edad.value,
+                peso:form.peso.value,
+                estatura:form.estatura.value,
+                descripcion_deestado:form.descripcion_deestado.value,
+                
+            };
+            const {medico: resultado, error} = await PacienteController.actualizarPaciente(curp, pacienteActualizado);
+            if(error){
+                console.log("curp original =", curp);
+                alert('No se pudo actualizar el paciente');
+                console.error('Pus no se pudo', error)
+                return;
+            }
+            alert('datos actualizados');
+            window.location.href='pacientes.html';
+        });
+    });
+    
+
+        </script>
+        <script>
+        //cargar header
+        fetch('/../../../header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error al cargar el header', error));
+        //cargar footer
+        fetch('/../../../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error al cargar el footer', error));
+        </script>
+    </body>
+    </html>

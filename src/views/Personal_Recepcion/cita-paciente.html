@@ -1,0 +1,114 @@
+<!--link funciona-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultorio simi - Pagina Paciente</title>
+    <link rel="stylesheet" href="../../styles/components.css">
+</head>
+<body>
+    <!--header-->
+    <div id="header-container"></div>
+    <main>
+        <div class="encabezado-paginapaciente">
+            <h1 id="paciente-nombre">Atendiendo al Paciente: [nombre_completo]</h1>
+            <p>Aqui se pueden agendar,eliminar y editar las citas del paciente</p>
+             <button class="botonregreso" onclick="location.href='pacientes.html'">Regresar</button>
+        </div>
+        <div class="contenido-paciente">
+        <div class="citas-del-paciente">
+            <h2>Citas Agendadas</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Cita</th>
+                            <th>CURP Paciente</th>
+                            <th>Codigo Medico</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Turno</th>
+                            <th>Cancelada?</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>[id_cita]</td>
+                            <td>[curp_paciente]</td>
+                            <td>[codigo_medico]</td>
+                            <td>[fecha]</td>
+                            <td>[horario]</td>
+                            <td>[turno]</td>
+                            <td>[cancelada]</td>
+                            <td>
+                                <button onclick="location.href=''">editar cita</button>
+                                <button onclick="location.href=''">eliminar cita</button>
+                                <button onclick="location.href=''">cancelar cita</button>        
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+        <div class="citas-del-paciente-canceladas">
+            <h2>Citas Canceladas</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Cita</th>
+                            <th>CURP Paciente</th>
+                            <th>Codigo Medico</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Turno</th>
+                            <th>Cancelada?</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>[id_cita]</td>
+                            <td>[curp_paciente]</td>
+                            <td>[codigo_medico]</td>
+                            <td>[fecha]</td>
+                            <td>[horario]</td>
+                            <td>[turno]</td>
+                            <td>[cancelada]</td>
+                            <td>
+                                <button onclick="location.href=''">Reactivar cita</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    </main>
+    <!--footer-->
+    <div id="footer-container"></div>
+    <script type="module">
+        window.addEventListener('DOMContentLoaded', () => {
+        const nombre_completo = localStorage.getItem('nombre_completo');
+        const titulo = document.getElementById('paciente-nombre');
+        if (titulo) {
+            titulo.textContent = `Atendiendo al Paciente: ${nombre_completo}`;
+        }
+    });
+    </script>
+    <script>
+        //cargar header
+        fetch('/../../../header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error al cargar el header', error));
+        //cargar footer
+        fetch('/../../../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error al cargar el footer', error));
+        </script>
+</body>
+</html>

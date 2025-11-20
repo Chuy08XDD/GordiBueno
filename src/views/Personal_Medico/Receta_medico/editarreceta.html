@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Receta</title>
+    <link rel="stylesheet" href="../../../styles/components.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    
+    <main class="mainn">
+        <div class="bienvenida-medicoo">
+            <h2>Editar Receta</h2>
+            <button onclick="location.href='../citas-medico.html'">Regresar</button>
+        </div>
+        
+        <div class="contenido-medico">
+            <form id="formReceta">
+                <input type="hidden" id="id-cita" name="id_cita">
+                
+                <h3>Cambiar Medicamento</h3>
+                
+                <label>Medicamento
+                    <select id="select-medicamento" name="medicamento" required>
+                        <option value="">Cargando medicamentos...</option>
+                    </select>
+                </label>
+                
+                <label>Cantidad
+                    <input type="number" id="input-cantidad" name="cantidad" min="1" value="1" required>
+                </label>
+                
+                <label>Dosis (opcional)
+                    <input type="text" id="input-dosis" name="dosis" placeholder="Ej: 500mg cada 8 horas">
+                </label>
+                
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn primary">Guardar Cambios</button>
+                    <button type="button" onclick="location.href='../citas-medico.html'" class="btn">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <div id="footer-container"></div>
+    <script>
+        //cargar header
+        fetch('../../../../header.html')
+        .then(response => response.text())
+        .then(data =>{
+            document.getElementById('header-container').innerHTML = data;
+        })
+        .catch(error => console.error('No se pudo cargar el header', error));
+        //cargar footer
+        fetch('../../../../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => console.error('No cargo el footer', error));
+    </script>
+</body>
+</html>

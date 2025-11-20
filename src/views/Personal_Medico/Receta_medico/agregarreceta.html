@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Receta</title>
+    <link rel="stylesheet" href="../../../styles/components.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    
+    <main class="mainn">
+        <div class="bienvenida-medicoo">
+            <h2>Nueva Receta</h2>
+            <button onclick="location.href='../citas-medico.html'">Regresar</button>
+        </div>
+        
+        <div class="contenido-medico">
+            <form id="formReceta">
+                <input type="hidden" id="id-cita" name="id_cita">
+                
+                <h3>Agregar Medicamento</h3>
+                
+                <label>Medicamento
+                    <select id="select-medicamento" name="medicamento" required>
+                        <option value="">Cargando medicamentos...</option>
+                    </select>
+                </label>
+                
+                <label>Cantidad
+                    <input type="number" id="input-cantidad" name="cantidad" min="1" value="1" required>
+                </label>
+                
+                <label>Dosis (opcional)
+                    <input type="text" id="input-dosis" name="dosis" placeholder="Ej: 500mg cada 8 horas">
+                </label>
+                
+                <div style="margin-top: 20px;">
+                    <button type="submit" class="btn primary">Guardar Receta</button>
+                    <button type="button" onclick="location.href='../citas-medico.html'" class="btn">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <div id="footer-container"></div>
+    
+    <script type="module">
+        import { RecetaController } from '../../../controllers/RecetaController.js';
+        
+        // Obtener id_cita de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const idCita = urlParams.get('id_cita');
+        
+        if (idCita) {
+            document.getElementById('id-cita').value = idCita;
+        } else {
+            alert('No se encontró ID de cita');
+            location.href = '../citas-medico.html';
+        }
+        
+        // Cargar medicamentos
+        (async () => {
+            const { medicamentos } = await RecetaController.cargarMedicamentos();
+            const select = document.getElementById('select-medicamento');
+            
+            select.innerHTML = '<option value="">Seleccione un medicamento...</option>';
+            
+            medicamentos.forEach(med => {
+                const option = document.createElement('option');
+                option.value = med.id_medicamento;
+                option.textContent = `${med.nombre} - $${med.precio}`;
+                select.appendChild(option);
+            });
+        })();
+        
+        // Submit del formulario
+        document.getElementById('formReceta').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const idCita = parseInt(document.getElementById('id-cita').value);
+            const idMedicamento = document.getElementById('select-medicamento').value;
+            const cantidad = document.getElementById('input-cantidad').value;
+            const dosis = document.getElementById('input-dosis').value;
+            
+            if (!idMedicamento) {
+                alert('Por favor seleccione un medicamento');
+                return;
+            }
+            
+            // Crear receta
+            const { receta, error: errorReceta } = await RecetaController.crearRecetaDesdeCita(idCita);
+            
+            if (errorReceta || !receta) {
+                alert('Error al crear la receta: ' + (errorReceta?.message || 'Error desconocido'));
+                return;
+            }
+            
+            // Agregar medicamento a la receta
+            const { success, error: errorMed } = await RecetaController.agregarMedicamentoAReceta(receta.id_receta, {
+                id_medicamento: idMedicamento,
+                cantidad: cantidad,
+                dosis: dosis
+            });
+            
+            if (!success) {
+                alert('Error al agregar medicamento: ' + (errorMed?.message || 'Error desconocido'));
+                return;
+            }
+            
+            alert('Receta creada exitosamente');
+            location.href = '../citas-medico.html';
+        });
+        
+      //cargar header
+            fetch('../../../../header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar el header:', error));
+            //cargar footer
+            fetch('../../../../footer.html')
+            .then(response => response.text())
+            .then(data =>{
+                document.getElementById('footer-container').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar el footer:', error));
+    </script>
+</body>
+</html>

@@ -128,3 +128,6 @@ Para preguntas o sugerencias:
 
 **Nota**: Este es un proyecto educativo. Siéntete libre de aprender, experimentar y contribuir. 🚀
 
+
+el que lea me debe un terreneitor y si no cumples abrazaré a tu mami
+- Chuy08XDD (2028)

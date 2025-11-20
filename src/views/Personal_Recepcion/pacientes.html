@@ -12,14 +12,15 @@
         <div id="header-container"></div>
         <main>
         <div class="encabezado-recepcion">
-            <h1>Pacientes</h1>
+            <h1 id="titulo-area-pacientes">Bienvenid@ recepcionista de sucursal [nombre_sucursal]</h1>
             <p>Pacientes de la clinica</p>
             <div class="botones-paciente">
             <button class="botonregreso" onclick="location.href='../sucursales/bienvenido.html'">Regresar</button>
-            <button class="botonagregar" onclick="location.href='../Pacientes/agregarpacientes.html'">Agregar paciente</button>
+            <button class="botonagregar" onclick="location.href='agregarpacientes.html'">Agregar paciente</button>
         </div>
     </div>
         <div class="tabla-pacientes">
+            <h2>Pacientes de todas las clinicas</h2>
             <table>
                 <thead>
                     <tr>
@@ -35,27 +36,101 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>[curp]</td>
-                        <td>[ine]</td>
-                        <td>[nombre_completo]</td>
-                        <td>[direccion]</td>
-                        <td>[edad]</td>
-                        <td>[peso]</td>
-                        <td>[estatura]</td>
-                        <td>[descripcion_deestado]</td>
-                        <td>
-                            <button class="seleccionar-paciente">Seleccionar Paciente</button>
-                            <button class="editar-paciente">Editar Paciente</button>
-                            <button class="eliminar-paciente">Eliminar Paciente</button>
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
         </main>
         <!--footer-->
         <div id="footer-container"></div>
+        <script type="module">
+            //importo controlador
+            import {PacienteController} from '../../controllers/pacienteController.js';
+            //cargar pacientitos
+            document.addEventListener("DOMContentLoaded",cargarPacientes);
+            //la funcion para cargarlos
+            async function cargarPacientes(){
+                try{
+                    const {pacientes,error} = await PacienteController.cargarPacientes();
+                    if(error){
+                        console.error('No se pudo cargar a los pacientes',error)
+                        return;
+                    }
+                    renderizarPacientes(pacientes);
+                }
+                catch(error){
+                    console.error('Error',error);
+                }
+                async function renderizarPacientes(pacientes) {
+                    const tbody = document.querySelector("tbody");
+                    tbody.innerHTML = "";//tablita limpia
+                    //que mensaje da si no hay nada en la tabla 
+                    if(!pacientes || pacientes.length === 0){
+                        tbody.innerHTML = `<tr><td colspan="9">No hay pacientes en las clinicas</td></tr>`;
+                        return;
+                    }
+                    pacientes.forEach(paciente => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                        <td>${paciente.curp}</td>
+                        <td>${paciente.ine}</td>
+                        <td>${paciente.nombre_completo}</td>
+                        <td>${paciente.direccion}</td>
+                        <td>${paciente.edad}</td>
+                        <td>${paciente.peso}</td>
+                        <td>${paciente.estatura}</td>
+                        <td>${paciente.descripcion_deestado}</td>
+                        <td>
+                            <button class="seleccionar-paciente" data-curp="${paciente.curp}" data-nombre_completo="${paciente.nombre_completo}">Seleccionar Paciente</button>
+                            <button class="editar-paciente" data-curp="${paciente.curp}" data-nombre_completo="${paciente.nombre_completo}">Editar Paciente</button>
+                            <button class="eliminar-paciente" data-curp="${paciente.curp}">Eliminar Paciente</button>
+                        </td>
+                        `;
+                        tbody.appendChild(tr);
+                        
+                    });
+                    activarBotones();
+                }
+                async function activarBotones() {
+                    //boton para ir a ver citas del paciente
+                    document.querySelectorAll(".seleccionar-paciente").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        localStorage.setItem("curp",btn.dataset.curp);
+                        localStorage.setItem("nombre_completo",btn.dataset.nombre_completo);
+                        location.href = "cita-paciente.html";
+                    });
+                });
+                    //boton para editar
+                    document.querySelectorAll(".editar-paciente").forEach(btn => {
+                    btn.addEventListener("click", () => { 
+                        localStorage.setItem("curp",btn.dataset.curp);
+                        localStorage.setItem("nombre_completo",btn.dataset.nombre_completo);
+                        location.href = "editarpacientes.html";
+                    });
+
+                });
+                    //boton para borrar
+                document.querySelectorAll(".eliminar-paciente").forEach(btn => {
+                btn.addEventListener("click", async () => {
+
+                const curp = btn.dataset.curp;
+
+                if (!confirm("¿Segurísima que quieres borrar?")) return;
+
+                const { success, error } = await PacienteController.eliminarPaciente(curp);
+
+                if (success) {
+                alert("Se eliminó al paciente");
+                cargarPacientes();
+                } else {
+                alert("No se pudo eliminar");
+                }
+                });
+                });
+
+                }
+            }
+
+        </script>
         <script>
             //cargar header
             fetch('../../../header.html')
@@ -71,6 +146,14 @@
                 document.getElementById('footer-container').innerHTML = data;
             })
             .catch(error => console.error('Error al cargar el footer:', error));
+            //para que diga el nombre de la sucursal
+            window.addEventListener('DOMContentLoaded', () => {
+            const sucursalNombre = localStorage.getItem('sucursalNombre') || 'Sucursal';
+            const titulo = document.getElementById('titulo-area-pacientes');
+            if (titulo) {
+            titulo.textContent = `Bienvenid@ recepcionista de sucursal: ${sucursalNombre}`;
+            }
+            });
         </script>
     </body>
 </html>

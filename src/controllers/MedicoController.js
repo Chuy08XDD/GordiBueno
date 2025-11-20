@@ -21,6 +21,18 @@ export class MedicoController{
         return{medicos:[],error};
         }
     }
+    static async obtenerMedicosporCodigo(codigo){
+        try{
+            const {data,error} = await MedicoService.obtenerMedicosporCodigo(codigo)
+            if(error){
+                return{medico:null, error};
+            }
+            return{medico:data, error:null};
+        }
+        catch(error){
+            return{ medico:null, error};
+        }
+    }
     static async crearMedico(medicoData){
         try{
             //agregar sucursal??
@@ -39,9 +51,9 @@ export class MedicoController{
             const {data,error} = await MedicoService.CrearMedico(medico);
             if(error){
                 console.error('Error al crear medico:', error);
-                return {data:null,error};
+                return {medico:null,error};
             }
-            return{data,error:null};
+            return{medico:data,error:null};
         } catch (error){
             console.error('Error:', error);
             return {medico: null, error};

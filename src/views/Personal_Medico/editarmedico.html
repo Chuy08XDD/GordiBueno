@@ -1,9 +1,9 @@
-<!--Funciona link-->
+<!--Funciona link,ya funciona al editar-->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=ddevice-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clinica Simi - Editar Medico</title>
     <link rel="stylesheet" href="../../styles/components.css">
 </head>
@@ -12,23 +12,23 @@
     <div id="header-container"></div>
         <main>
             <section class="form-section">
-                <h2>EDITAR DATOS DEL MEDICO</h2>
+                <h2 id="codigo-medico">EDITAR DATOS DEL MEDICO [codigo]</h2>
                 <div class="editar-medico-general">
-                <form action="/agregarmedico" method="POST"></form>
+                <form id="form-medico">
                     <!--Name del causa-->
                     <div class="edit-nombre-medico">
                     <label for="nombre_completo">Nombre Completo:</label>
-                    <input type="text" id="nombre_completo" name="nombre_completo" required><br>
+                    <input type="text" id="nombre_completo" name="nombre_completo" value="[nombre_completo]" required><br>
                     </div>
                     <!--Codigo unico de sepa que bolas-->
                     <div class="edit-curp-medico">
                     <label for="curp">CURP:</label>
-                    <input type="text" id="curp" name="curp" required placeholder="Ej: PEGJ900314HDFMRN00"><br>
+                    <input type="text" id="curp" name="curp" value="[curp]" required ><br>
                     </div>
                     <!--En q chambeas papi-->
                     <div class="edit-especialidad-medico">
                     <label for="especialidad">Especialidad:</label>
-                    <select class="form-control" name="categoria" required>
+                    <select class="form-control" name="especialidad" required>
                     <option value="seleccione">Seleccione una opcion..</option>
                     <option value="Pediatra">Pediatra</option>
                     <option value="Pediatra">Ginecologo</option>
@@ -39,25 +39,25 @@
                     <!--Pasa numero 🗣🥵-->
                     <div class="edit-telefono-medico">
                     <label for="telefono">Teléfono:</label>
-                    <input type="tel" id="telefono" name="telefono" required placeholder="Ej: 47-47-55-44-99"><br>
+                    <input type="tel" id="telefono" name="telefono" value="[telefono]" required><br>
                     </div>
                     <!--Cuantos años tienes (que no te bañas)-->
                     <div class="edit-edad-medico">
                     <label for="edad">Edad:</label>
-                    <input type="number" id="edad" name="edad" required placeholder="25"><br>
+                    <input type="number" id="edad" name="edad" required value="" required><br>
                     </div>
                     <!--Elmo sabe donde vives ktm-->
                     <div class="edit-direccion-medico">
                     <label for="direccion">Dirección:</label>
-                    <input type="text" id="direccion" name="direccion" required placeholder="Ej: Calle centro #55 col vida nueva"><br>
+                    <input type="text" id="direccion" name="direccion" value="[direccion]" required><br>
                     </div>
                     <!--Codigo aquino en la tienda de fortnite-->
                     <div class="edit-codigo-medico">
                     <label for="codigo">Código Médico:</label><!--que tipo de codigo es? lo van a poner a mano?-->
-                    <input type="text" id="codigo" name="codigo" required placeholder="Ej: "><br>
+                    <input type="text" id="codigo" name="codigo" value="[codigo]" required><br>
                     </div>
                         <div class="botones-medico">
-                        <button onclick="location.href='medico.html'" class="actualizar-medico">Guardar Cambios</button>
+                        <button type="submit" class="actualizar-medico">Guardar Cambios</button>
                         <button onclick="location.href='medico.html'" class="cancelar-medico">Cancelar</button>
                         </div>
             </form>
@@ -66,6 +66,69 @@
         </main>
     <!--footer-->
     <div id="footer-container"></div>
+    
+    <script type="module">
+        //codigo para que guarde y en enseñe datos
+        import { MedicoController } from '../../controllers/MedicoController.js';
+        
+        //cargar codigo de medico que pasamos desde medicos
+         window.addEventListener('DOMContentLoaded', async () => {
+            const codigo = localStorage.getItem('codigo_medico');
+            const titulo = document.getElementById('codigo-medico')
+            if(!codigo){
+            console.error('no se encontro codigo',error);
+            return;
+         }
+            if(titulo){
+                titulo.textContent = `EDITAR DATOS DEL MEDICO ${codigo}`
+            }
+        
+         
+        //traer datos con controlador
+        const { medico,error} = await MedicoController.obtenerMedicosporCodigo(codigo);
+        if(error){
+            console.log('fallo traer datos',error)
+            return{medico:null,error}
+        }
+        //para mis inputs del formulario
+        document.getElementById("nombre_completo").value = medico.nombre_completo;
+        document.getElementById("curp").value = medico.curp;
+        document.getElementById("telefono").value = medico.telefono;
+        document.getElementById("edad").value = medico.edad;
+        document.getElementById("direccion").value = medico.direccion;
+        document.getElementById("codigo").value = medico.codigo;
+        //para el select (es que quiere ser especial)
+        document.querySelector("select[name='especialidad']").value =medico.especialidad;
+
+        //parte de mis botoncitos
+        const form = document.getElementById("form-medico");
+        
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            //mi arreglo para guardar los nuevos datos
+            const medicoActualizado = {
+                nombre_completo: form.nombre_completo.value,
+                curp:form.curp.value,
+                telefono: form.telefono.value,
+                edad:form.edad.value,
+                direccion: form.direccion.value,
+                especialidad: form.especialidad.value,
+                codigo: form.codigo.value,
+            };
+            const {medico: resultado, error} = await MedicoController.actualizarMedico(codigo, medicoActualizado);
+            if(error){
+                alert('No se pudo actualizar doctor');
+                console.error('Pus no se pudo', error)
+                return;
+            }
+            alert('datos actualizados');
+            window.location.href='medico.html';
+        });
+    });
+    
+
+    </script>
+    
     <script>
         //cargar header
         fetch('/../../../header.html')

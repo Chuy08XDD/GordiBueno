@@ -42,6 +42,23 @@ export class MedicoService{
             return{data:null, error};
         }
     }
+    //se usara para editar los datos del medico con ese codigo
+    static async obtenerMedicosporCodigo(codigo){
+        try{   
+            const {data,error} = await supabase
+            .from('medico')
+            .select('*')
+            .eq('codigo',codigo)//para buscar medico exacto
+            .single();//solo un medico
+            if(error){
+                return{data:null,error}
+            }
+            return{data,error:null}
+        }
+        catch(error){
+            return{data:null,error}
+        }
+    }
     static async actualizarMedico(medicoData,codigo){
         try{
             const {data,error} = await supabase
