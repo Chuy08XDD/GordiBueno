@@ -1,0 +1,374 @@
+<!--Link funciona-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmacia Simi - Surtir medicamentos receta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../styles/components.css">
+</head>
+<body>
+    <div id="header-container"></div>
+    <main>
+        <div class="titulo-receta">
+            <h1>Bienvenido a surtir receta</h1>
+            <p>Aqui se mostraran los medicamentos de la receta del paciente<br>
+            selecciona todos o los que el paciente te pida
+            </p>
+            <button class="botonregreso" onclick="location.href='farmacia.html'">Regresar</button>
+        </div>
+        </div>
+        <div class="tablita-datos-de-receta">
+            <h2>Datos de receta</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID de receta</th>
+                        <th>ID de cita</th>
+                        <th>Fecha de expedicion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td>[id_receta]</td>
+                    <td>[id_cita]</td>
+                    <td>[fecha_expedicion]</td>
+                    </tr>
+                <tbody>
+            </table>
+        <div class="tablita-medicamentos-en-receta">
+            <h2>Datos de medicamentos</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID receta</th>
+                        <th>Medicamento</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                    <td>[id_receta]</td>
+                    <td>[medicamento]</td>
+                    <td>[cantidad]</td>
+                    <td>
+                        <button>Agregar a venta</button>
+                    </td>
+                    </tr>
+                <tbody>
+            </table>
+        </div>
+    </div>
+        <div class="tablita-contenedor-venta">
+        <div class="tablita-venta">
+            <h2>Carrito</h2>
+            
+        </div><br>
+        <div class="boton-finalizar">
+            <button id="btn-finalizar">Finalizar la venta</button>
+        </div></div>
+    </main>
+    <div id="footer-container"></div>
+</body>
+<script>
+        // Cargar header y footer
+	    //cargar header
+        fetch('../../../header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error al cargar el header', error));
+        //cargar footer
+        fetch('../../../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-container').innerHTML = data;
+        })
+        .catch(error => console.error('Error al cargar el footer', error));
+</script>
+<script type="module">
+    //esto si se ocupa
+        //controller para farmacia
+        import { FarmaciaController} from '../../controllers/FarmaciaController.js';
+        import { RecetaController } from '../../controllers/RecetaController.js';
+        import { RecetaMedicamentoController } from '../../controllers/RecetaMedicamentoController.js';
+
+        //variable global
+        let carrito = []; // { id_receta_medicamento, nombre, cantidad, precio }
+        
+
+        document.addEventListener("DOMContentLoaded", iniciar);
+
+        async function iniciar() {//se puede conseguir en farmacia ya que ahi tenemos los datos de receta
+            const id_cita = localStorage.getItem("id_cita");
+
+            if (!id_cita) {
+                console.error("No hay id_cita");
+                return;
+            }
+
+            await cargarRecetaYMedicamentos(id_cita);
+            
+
+        }
+
+        async function cargarRecetaYMedicamentos(id_cita) {
+
+            const { receta, error } = await RecetaController.obtenerRecetaporId(id_cita);
+
+            if (error) {
+                console.error("Error al cargar receta:", error);
+                return;
+            }
+
+            renderizarRecetas(receta);
+
+            if (!receta || receta.length === 0) {
+                console.warn("La cita no tiene receta todavía.");
+                document.querySelector(".tablita-medicamentos-en-receta").style.display = "none";
+                return;
+            }
+
+            const id_receta = receta[0].id_receta;
+
+           const { RecetaMedicamento, error: errorRM } =
+                await RecetaMedicamentoController.obtenerRecetaMedicamentoporid(id_receta);
+
+            if (errorRM) {
+                console.error("Error al cargar medicamentos:", errorRM);
+                return;
+            }
+
+            renderizarRecetasMedicamento(RecetaMedicamento);
+
+        }
+
+        function renderizarRecetas(receta) {
+            const tbody = document.querySelector(".tablita-datos-de-receta tbody");
+            tbody.innerHTML = "";
+
+            receta.forEach(r => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${r.id_receta}</td>
+                        <td>${r.id_cita}</td>
+                        <td>${r.fecha_expedicion}</td>
+                    </tr>
+                `;
+            });
+        }
+
+       function renderizarRecetasMedicamento(rmLista) {
+            const tbody = document.querySelector(".tablita-medicamentos-en-receta tbody");
+            tbody.innerHTML = "";
+
+            rmLista.forEach(rm => {
+                // crea un id único: usa id_receta_medicamento si existe, sino un compuesto
+                const idRm = rm.id_receta_medicamento !== undefined && rm.id_receta_medicamento !== null
+                    ? String(rm.id_receta_medicamento)
+                    : `${rm.id_receta}-${rm.id_medicamento}`;
+
+                const yaEnCarrito = carrito.some(item => String(item.id_rm) === idRm);
+
+                // precio desde el objeto medicamento (si existe)
+                const precio = rm.medicamento?.precio ?? 0;
+
+                tbody.innerHTML += `
+                    <tr 
+                    data-row-id="${idRm}" 
+                    data-id-receta="${rm.id_receta}" 
+                    data-id-medicamento="${rm.id_medicamento}"
+                    >
+                        <td>${rm.id_receta}</td>
+                        <td>${rm.medicamento?.nombre ?? 'Sin nombre'}</td>
+                        <td>${rm.cantidad}</td>
+                        <td>${rm.medicamento?.precio ?? '0'}</td>
+                        <td>
+                           ${rm.comprado 
+                            ? "<span style='color: green; font-weight: bold;'>Surtido</span>"
+                            : `
+                            <button class="btn-carrito"
+                                data-id="${idRm}"
+                                data-id-real="${rm.id_receta_medicamento ?? ''}"
+                                data-id-medicamento="${rm.id_medicamento ?? ''}"
+                                data-nombre="${rm.medicamento?.nombre ?? ''}"
+                                data-cantidad="${rm.cantidad}"
+                                data-precio="${precio}"
+                            >${yaEnCarrito ? "Quitar" : "Agregar a venta"}</button>
+                            `
+                        }
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Asignar eventos (siempre después de escribir el tbody)
+            document.querySelectorAll(".btn-carrito").forEach(btn => {
+                btn.removeEventListener("click", manejarCarrito); // seguridad
+                btn.addEventListener("click", manejarCarrito);
+            });
+
+            // actualizar vista de carrito por si hay items ya (por ejemplo, volvemos a cargar)
+            renderVenta();
+        }
+
+    //para el carrito
+        function manejarCarrito(e) {
+            const btn = e.target;
+            const id = btn.dataset.id; // id compuesto o id_receta_medicamento como string
+            const idReal = btn.dataset.idReal ? Number(btn.dataset.idReal) : null; // id_receta_medicamento (PK)
+            const idMedicamento = btn.dataset.idMedicamento ? Number(btn.dataset.idMedicamento) : null; // id_medicamento real
+            const nombre = btn.dataset.nombre;
+            const cantidad = Number(btn.dataset.cantidad);
+            const precio = Number(btn.dataset.precio);
+
+            const index = carrito.findIndex(item => item.id_rm === id);
+
+            if (index === -1) {
+                // agregar
+                const idReceta = Number(btn.closest("tr").dataset.idReceta);
+
+                carrito.push({
+                id_receta: Number(btn.closest("tr").dataset.idReceta),
+                id_medicamento: idMedicamento,
+                nombre,
+                cantidad,
+                precio
+            });
+
+
+                btn.textContent = "Quitar";
+            } else {
+                // quitar
+                carrito.splice(index, 1);
+                btn.textContent = "Agregar a venta";
+            }
+
+            renderVenta();
+        }
+
+        //para venta
+        function renderVenta() {
+            const divVenta = document.querySelector(".tablita-venta");
+            divVenta.innerHTML = `
+                <h2>Carrito</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Medicamento</th>
+                            <th>Cantidad</th>
+                            <th>Precio total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${carrito.map(item => `
+                            <tr>
+                                <td>${item.nombre}</td>
+                                <td>${item.cantidad}</td>
+                                <td>${item.precio * item.cantidad}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+                <h3>Total: $${carrito.reduce((t, i) => t + (i.precio * i.cantidad), 0)}</h3>
+            `;
+        }
+        //logica para botoncito 
+      document.getElementById("btn-finalizar").addEventListener("click", async () => {
+            if (carrito.length === 0) {
+                alert("No hay medicamentos en la venta.");
+                return;
+            }
+
+            try {
+                // Construir el array que espera crearVenta
+                // Cada elemento: { id_medicamento, nombre, precio, cantidad, subtotal }
+                const medicamentosArray = carrito.map(item => {
+                    const idMed = item.id_medicamento || (typeof item.id_rm === 'string' && item.id_rm.includes('-') ? Number(item.id_rm.split('-').pop()) : null);
+                    const cantidad = Number(item.cantidad) || 1;
+                    const precio = Number(item.precio) || 0;
+                    const subtotal = cantidad * precio;
+                    return {
+                        id_medicamento: idMed,
+                        nombre: item.nombre,
+                        precio,
+                        cantidad,
+                        subtotal
+                    };
+                });
+
+                // VALIDACIÓN: asegurar que tengamos id_medicamento para cada item
+                const sinId = medicamentosArray.some(m => !m.id_medicamento);
+                if (sinId) {
+                    console.warn("Algún medicamento no tiene id_medicamento; revisa los datos.");
+                    // Puedes decidir bloquear o continuar; aquí informamos y continuamos.
+                }
+
+                // 1) Crear la venta (FarmaciaController.crearVenta espera el array)
+                const { venta, error: errorCrear } = await FarmaciaController.crearVenta(medicamentosArray);
+
+                if (errorCrear || !venta) {
+                    console.error("Error al crear la venta:", errorCrear);
+                    alert("Error al registrar la venta. Revisa la consola.");
+                    return;
+                }
+
+                const id_venta = venta.id_venta;
+                console.log("Venta creada id:", id_venta);
+
+                // 2) Marcar cada receta_medicamento como comprado (si tenemos id_receta_medicamento)
+                 for (const item of carrito) {
+                        const { success, error } = await RecetaMedicamentoController.marcarComoComprado(
+                            item.id_receta,
+                            item.id_medicamento
+                        );
+
+                        if (!success) {
+                            console.error("Error al marcar como comprado:", error);
+                            alert("Error al marcar un medicamento como comprado.");
+                            return;
+                        }else {
+                        // Si no tienes id_receta_medicamento (caso raro), puedes buscarlo o ignorarlo
+                        console.warn("No hay id_receta_medicamento para item:", item);
+                        }
+                    }
+
+                // 3) Comprobar si ya se compraron todos y si es así marcar receta surtida
+                // Obtenemos id_receta desde la tabla de datos (primer td de la tabla datos de receta)
+                const idRecetaTd = document.querySelector(".tablita-datos-de-receta tbody tr td");
+                const id_receta = idRecetaTd ? idRecetaTd.textContent.trim() : null;
+
+                if (id_receta) {
+                    const estado = await FarmaciaController.verificarMedicamentosComprados(Number(id_receta));
+                    if (estado.todosComprados) {
+                        // Marcar receta como surtida (usa tu método existente)
+                        const { success: surtidaOk, error: errSurtir } = await FarmaciaController.surtirReceta(Number(id_receta));
+                        if (!surtidaOk) {
+                            console.error("Error al marcar receta como surtida:", errSurtir);
+                            // no bloqueamos la salida, avisamos
+                            alert("Venta registrada, pero no se pudo marcar la receta como surtida. Revisa la consola.");
+                        } else {
+                            alert("Venta registrada correctamente. Receta marcada como SURTIDA.");
+                        }
+                    } else {
+                        alert("Venta registrada correctamente. Quedan medicamentos sin surtir.");
+                    }
+                } else {
+                    alert("Venta registrada correctamente.");
+                }
+
+                // 4) volver a farmacia
+                location.href = "farmacia.html";
+
+            } catch (err) {
+                console.error("Error finalizando la venta:", err);
+                alert("Ocurrió un error al finalizar la venta. Revisa la consola.");
+            }
+        });
+
+</script>
+</html>

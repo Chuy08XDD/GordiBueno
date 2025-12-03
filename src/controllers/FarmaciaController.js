@@ -2,6 +2,7 @@
 import { FarmaciaService } from '../services/FarmaciaService.js';
 import { VentaMedicamentoService } from '../services/VentaMedicamentoService.js';
 import { MedicamentoService } from '../services/MedicamentoService.js';
+import { RecetaMedicamentoService } from '../services/RecetaMedicamentoService.js';//añadido por alo para nueva funcion(trust me)
 import { Venta } from '../models/Venta.js';
 import { Receta } from '../models/Receta.js';
 import { Medicamento } from '../models/Medicamento.js';
@@ -124,6 +125,12 @@ export class FarmaciaController {
         if (!selectMedicamento || !inputCantidad || !inputPrecio || !inputSubtotal) return;
         
         const selectedOption = selectMedicamento.options[selectMedicamento.selectedIndex];
+        if (!selectedOption || !selectedOption.value) {
+            inputPrecio.value = '';
+            inputSubtotal.value = '';
+            return;
+        }
+        
         const precio = parseFloat(selectedOption.dataset.precio) || 0;
         const cantidad = parseFloat(inputCantidad.value) || 0;
         const subtotal = precio * cantidad;
@@ -132,27 +139,108 @@ export class FarmaciaController {
         inputSubtotal.value = subtotal.toFixed(2);
     }
 
-    static async crearVenta(ventaData) {
+    static async crearVenta(medicamentosArray) {
         try {
             const idFarmacia = parseInt(localStorage.getItem('idFarmacia')) || 1;
-            const venta = {
-                id_farmacia: idFarmacia,
-                id_medicamento: parseInt(ventaData.id_medicamento),
-                fecha_venta: new Date().toISOString().split('T')[0],
-                hora_venta: new Date().toTimeString().split(' ')[0], // Agregar hora
-                total: parseFloat(ventaData.total),
-                tipo: 'venta',
-                vendedor: localStorage.getItem('usuarioNombre') || 'Farmacéutico' // Agregar vendedor
-            };
             
-            const { data, error } = await FarmaciaService.crearVenta(venta);
-            
-            if (error) {
-                console.error('Error al crear venta:', error);
-                return { venta: null, error };
+            // Validar que haya medicamentos
+            if (!medicamentosArray || medicamentosArray.length === 0) {
+                return { venta: null, error: { message: 'Debe agregar al menos un medicamento' } };
             }
             
-            return { venta: data, error: null };
+            // Agrupar medicamentos duplicados por id_medicamento y sumar cantidades
+            const medicamentosAgrupados = {};
+            medicamentosArray.forEach(med => {
+                const idMed = med.id_medicamento;
+                if (medicamentosAgrupados[idMed]) {
+                    // Si ya existe, sumar la cantidad
+                    medicamentosAgrupados[idMed].cantidad += med.cantidad;
+                    medicamentosAgrupados[idMed].subtotal = medicamentosAgrupados[idMed].cantidad * medicamentosAgrupados[idMed].precio;
+                } else {
+                    // Si no existe, agregarlo
+                    medicamentosAgrupados[idMed] = {
+                        id_medicamento: med.id_medicamento,
+                        nombre: med.nombre,
+                        precio: med.precio,
+                        cantidad: med.cantidad,
+                        subtotal: med.subtotal
+                    };
+                }
+            });
+            
+            // Convertir el objeto agrupado de vuelta a array
+            const medicamentosUnicos = Object.values(medicamentosAgrupados);
+            
+            console.log('Medicamentos originales:', medicamentosArray.length);
+            console.log('Medicamentos únicos después de agrupar:', medicamentosUnicos.length);
+            
+            // Calcular el total de todos los medicamentos únicos
+            const totalVenta = medicamentosUnicos.reduce((sum, med) => sum + med.subtotal, 0);
+            
+            // Crear la venta sin id_medicamento (será NULL)
+            const venta = {
+                id_farmacia: idFarmacia,
+                id_medicamento: null, // Ya no se usa la relación directa porque no deja registrar varios medicamentos por venta o receta
+                fecha_venta: new Date().toISOString().split('T')[0],
+                hora_venta: new Date().toTimeString().split(' ')[0],
+                total: totalVenta,
+                tipo: 'venta',
+                vendedor: localStorage.getItem('usuarioNombre') || 'Farmacéutico'
+            };
+            
+            // Crear la venta en la base de datos
+            const { data: ventaCreada, error: errorVenta } = await FarmaciaService.crearVenta(venta);
+            
+            if (errorVenta || !ventaCreada) {
+                console.error('Error al crear venta:', errorVenta);
+                return { venta: null, error: errorVenta || { message: 'Error al crear la venta' } };
+            }
+            
+            // Agregar cada medicamento único a la venta usando venta_medicamento
+            let medicamentosAgregados = 0;
+            let erroresMedicamentos = [];
+            
+            for (const medicamento of medicamentosUnicos) {
+                const { success, error: errorMed } = await FarmaciaController.agregarMedicamentoAVenta(
+                    ventaCreada.id_venta,
+                    medicamento.id_medicamento,
+                    medicamento.cantidad,
+                    medicamento.precio,
+                    medicamento.subtotal
+                );
+                
+                if (!success || errorMed) {
+                    console.error('Error al agregar medicamento a venta:', errorMed);
+                    erroresMedicamentos.push({
+                        medicamento: medicamento.nombre,
+                        error: errorMed
+                    });
+                } else {
+                    medicamentosAgregados++;
+                }
+            }
+            
+            // Si no se agregó ningún medicamento, eliminar la venta
+            if (medicamentosAgregados === 0) {
+                console.error('No se pudo agregar ningún medicamento a la venta');
+                await FarmaciaService.eliminarVenta(ventaCreada.id_venta);
+                return { 
+                    venta: null, 
+                    error: { 
+                        message: 'Error al agregar medicamentos a la venta', 
+                        detalles: erroresMedicamentos 
+                    } 
+                };
+            }
+            
+            // Si hubo algunos errores pero al menos uno se agregó, mostrar advertencia
+            if (erroresMedicamentos.length > 0) {
+                console.warn('Algunos medicamentos no se pudieron agregar:', erroresMedicamentos);
+            }
+            
+            console.log('Resumen venta normal: Agregados', medicamentosAgregados, 'de', medicamentosUnicos.length, 'medicamentos únicos');
+            
+            return { venta: ventaCreada, error: null };
         } catch (error) {
             console.error('Error:', error);
             return { venta: null, error };
@@ -219,7 +307,7 @@ static async agregarMedicamentoAVenta(idVenta, idMedicamento, cantidad, precioUn
         }
     }
 
-    static renderizarRecetas(recetas, container) {
+    static async renderizarRecetas(recetas, container) {//async para que funcione mi await
         if (!container) return;
         
         if (!recetas || recetas.length === 0) {
@@ -243,8 +331,10 @@ static async agregarMedicamentoAVenta(idVenta, idMedicamento, cantidad, precioUn
 `;
         
         const tbody = table.querySelector('tbody');
-        
-        recetas.forEach(receta => {
+        //cambio forEach para usar un await dentro
+        //recetas.forEach(receta => {
+       for (const receta of recetas) {
+             //revisar si yase compraron todos los medicamentos
             const tr = document.createElement('tr');
             const nombrePaciente = receta.paciente?.nombre_completo || 'Sin nombre';
             tr.innerHTML = `
@@ -254,25 +344,65 @@ static async agregarMedicamentoAVenta(idVenta, idMedicamento, cantidad, precioUn
                 <td>${receta.surtida ? 'Sí' : 'No'}</td>
                 <td></td>
             `;
+
+            //parte para verificar(no afecta mucho la vdd)
+             const {todosComprados} = await FarmaciaController.verificarMedicamentosComprados(receta.id_receta);
+              console.log(`Medicamentos comprados para receta ${receta.id_receta}:`, todosComprados);
+            //si ya estan todos comprados
+            if (todosComprados && !receta.surtida) {
+                tr.querySelector('td:nth-child(4)').textContent = 'Listo para surtir';
+            }
+
             
             const tdAcc = tr.querySelector('td:last-child');
             const btn = document.createElement('button');
             btn.className = 'btn';
             btn.textContent = 'Surtir';
             btn.setAttribute('aria-label', `Surtir receta ${receta.id_receta}`);
-            btn.addEventListener('click', async () => {
+            //si receta ya surtida
+                if (receta.surtida) {
+                btn.disabled = true;
+                btn.textContent = "Ya surtida";
+                }
+
+            //boton surtir
+                btn.addEventListener('click', async () => {
+                    //para recetas ya surtidas
+                     if (receta.surtida) {
+                        alert("Esta receta ya fue surtida. No puedes surtirla otra vez.");
+                        return;
+                    }
+                    //si medicamentos no comprados
+                    if(!todosComprados){
+                       localStorage.setItem("id_cita", receta.id_cita);
+                        window.location.href = "surtir.html";
+
+                        return;
+                    }
+
+                    //surtir normalmente
                 const { success, error } = await FarmaciaController.surtirReceta(receta.id_receta);
                 if (success) {
                     alert('Receta surtida exitosamente');
                     FarmaciaController.inicializar();
-                } else {
+                    //yo
+                    return;
+                } /*else {
                     alert('Error al surtir receta');
-                }
+                }*/
+
+                    //para el error del backend
+                    if (error?.message === "Receta ya surtida") {
+                    alert("Esta receta ya fue surtida previamente.");
+                    return;
+                    }
+                    alert('Error al surtir receta');
             });
             tdAcc.appendChild(btn);
             
             tbody.appendChild(tr);
-        });
+        };//});
+        
         
         container.innerHTML = '';
         container.appendChild(table);
@@ -292,17 +422,78 @@ static async agregarMedicamentoAVenta(idVenta, idMedicamento, cantidad, precioUn
         ventas.forEach(venta => {
             const li = document.createElement('li');
             li.className = 'venta-item';
-            const nombreMedicamento = venta.medicamento?.nombre || 'Sin medicamento';
             const hora = venta.hora_venta || 'N/A';
             const vendedor = venta.vendedor || 'Farmacéutico';
             const fecha = venta.fecha_venta;
             
+            // Debug: ver qué datos tenemos
+            console.log('Venta ID:', venta.id_venta, 'Datos completos:', venta);
+            console.log('venta_medicamento:', venta.venta_medicamento);
+            console.log('Es array?', Array.isArray(venta.venta_medicamento));
+            console.log('Longitud:', venta.venta_medicamento?.length);
+            
+            // Obtener medicamentos de la venta
+            // Supabase puede devolver un array vacío [] o null, así que verificamos ambos
+            let medicamentosVentaMedicamento = [];
+            
+            // Verificar diferentes formas en que Supabase puede devolver los datos
+            if (venta.venta_medicamento) {
+                if (Array.isArray(venta.venta_medicamento)) {
+                    medicamentosVentaMedicamento = venta.venta_medicamento;
+                } else if (typeof venta.venta_medicamento === 'object') {
+                    // Si es un objeto, convertirlo a array
+                    medicamentosVentaMedicamento = [venta.venta_medicamento];
+                }
+            }
+            
+            console.log('Medicamentos procesados:', medicamentosVentaMedicamento);
+            
+            // Construir lista de medicamentos
+            let medicamentosHTML = '';
+            if (medicamentosVentaMedicamento.length > 0) {
+                // Nuevo sistema: múltiples medicamentos desde venta_medicamento
+                medicamentosHTML = '<ul style="margin-top: 10px; padding-left: 20px; list-style: disc;">';
+                medicamentosVentaMedicamento.forEach(vm => {
+                    // El medicamento puede estar anidado o ser un objeto directo
+                    const medicamento = vm.medicamento || vm;
+                    const nombreMed = medicamento?.nombre || medicamento?.nombre_medicamento || 'Sin nombre';
+                    const cantidad = vm.cantidad || 1;
+                    const precioUnitario = vm.precio_unitario || vm.precio || medicamento?.precio || 0;
+                    const subtotal = vm.subtotal || (cantidad * precioUnitario);
+                    
+                    console.log('Procesando medicamento:', { vm, medicamento, nombreMed, cantidad, precioUnitario });
+                    
+                    medicamentosHTML += `<li>${nombreMed} - Cant: ${cantidad} x $${Number(precioUnitario).toFixed(2)} = $${Number(subtotal).toFixed(2)}</li>`;
+                });
+                medicamentosHTML += '</ul>';
+            } else if (venta.medicamento && venta.id_medicamento) {
+                // Fallback: sistema antiguo - medicamento directo (ventas creadas antes del cambio)
+                const nombreMedicamento = venta.medicamento.nombre || 'Sin nombre';
+                // Intentar obtener cantidad desde el modelo si existe
+                const cantidad = venta.cantidad || 1;
+                const precio = venta.medicamento.precio || 0;
+                const subtotal = cantidad * precio;
+                medicamentosHTML = `<div style="margin-top: 5px; padding-left: 20px;">
+                    • ${nombreMedicamento} - Cant: ${cantidad} x $${precio.toFixed(2)} = $${subtotal.toFixed(2)}
+                </div>`;
+            } else {
+                // No hay medicamentos - puede ser una venta nueva que aún no tiene medicamentos guardados
+                console.warn('Venta sin medicamentos - ID:', venta.id_venta, 'Datos:', {
+                    tiene_venta_medicamento: !!venta.venta_medicamento,
+                    tipo_venta_medicamento: typeof venta.venta_medicamento,
+                    tiene_medicamento: !!venta.medicamento,
+                    id_medicamento: venta.id_medicamento
+                });
+                medicamentosHTML = '<div style="margin-top: 5px; color: #999; padding-left: 20px;">Sin medicamento</div>';
+            }
+            
             li.innerHTML = `
                 <div class="venta-info">
-                    <strong>${nombreMedicamento}</strong><br>
-                    <small>ID: ${venta.id_venta} | Total: $${Number(venta.total).toFixed(2)}</small><br>
+                    <strong>Venta #${venta.id_venta}</strong><br>
+                    <small>Total: $${Number(venta.total).toFixed(2)}</small><br>
                     <small>Fecha: ${fecha} | Hora: ${hora}</small><br>
                     <small>Vendido por: ${vendedor}</small>
+                    ${medicamentosHTML}
                 </div>
             `;
             const actions = document.createElement('div');
@@ -316,22 +507,7 @@ static async agregarMedicamentoAVenta(idVenta, idMedicamento, cantidad, precioUn
                 FarmaciaController.abrirFormularioEditar(venta);
             });
             
-            const btnDel = document.createElement('button');
-            btnDel.className = 'btn small danger';
-            btnDel.textContent = 'Eliminar';
-            btnDel.setAttribute('aria-label', `Eliminar venta ${venta.id_venta}`);
-            btnDel.addEventListener('click', async () => {
-                if (!confirm('¿Eliminar venta?')) return;
-                const { success, error } = await FarmaciaController.eliminarVenta(venta.id_venta);
-                if (success) {
-                    FarmaciaController.inicializar();
-                } else {
-                    alert('Error al eliminar venta');
-                }
-            });
-            
             actions.appendChild(btnEdit);
-            actions.appendChild(btnDel);
             li.appendChild(actions);
             ul.appendChild(li);
         });
@@ -356,19 +532,29 @@ static async agregarMedicamentoAVenta(idVenta, idMedicamento, cantidad, precioUn
             FarmaciaController.llenarSelectMedicamentos(medicamentos, selectMedicamento);
         }
         
-        // Llenar formulario
-        const cantidadInput = document.getElementById('input-cantidad');
-        const totalInput = document.getElementById('input-total');
-        
-        if (venta.id_medicamento && selectMedicamento) {
-            selectMedicamento.value = venta.id_medicamento;
-            FarmaciaController.calcularTotal();
+        // Limpiar formulario
+        if (formVenta) {
+            formVenta.reset();
         }
-        if (cantidadInput) cantidadInput.value = venta.cantidad || 1;
-        if (totalInput) totalInput.value = venta.total || 0;
         
-        // Recalcular total
-        FarmaciaController.calcularTotal();
+        // Cargar medicamentos de la venta en el formulario
+        // Nuevo sistema: múltiples medicamentos desde venta_medicamento
+        let medicamentosVentaMedicamento = [];
+        if (venta.venta_medicamento) {
+            if (Array.isArray(venta.venta_medicamento)) {
+                medicamentosVentaMedicamento = venta.venta_medicamento;
+            } else if (typeof venta.venta_medicamento === 'object') {
+                medicamentosVentaMedicamento = [venta.venta_medicamento];
+            }
+        }
+        
+        // Si hay medicamentos, cargarlos en el formulario usando la función expuesta
+        if (medicamentosVentaMedicamento.length > 0 && window.cargarMedicamentosEnFormulario) {
+            window.cargarMedicamentosEnFormulario(medicamentosVentaMedicamento);
+        } else if (window.limpiarMedicamentosFormulario) {
+            // Si no hay medicamentos, limpiar el formulario
+            window.limpiarMedicamentosFormulario();
+        }
         
         // Mostrar panel
         formPanel.classList.remove('hidden');
@@ -421,6 +607,27 @@ static async agregarMedicamentoAVenta(idVenta, idMedicamento, cantidad, precioUn
         if (!errorVentas) {
             const ventasContainer = document.getElementById('ventas-list');
             FarmaciaController.renderizarVentas(ventas, ventasContainer);
+        }
+    }
+    //parte de alo para medicamento de receta
+    //verifica si ya se compraron todos los medicamentos de una receta
+    static async verificarMedicamentosComprados(id_receta){
+
+        console.log("Verificando receta:", id_receta);
+
+        try{
+            const {data,error} = await RecetaMedicamentoService.obtenerMedicamentosDeReceta(id_receta);
+             console.log("Respuesta de Supabase:", data, "Error:", error);            
+            if(error || !data){
+                return{todosComprados: false}
+            }
+            const todos = data.every(m => m.comprado === true);
+
+            return{todosComprados: todos};
+
+        }
+        catch(error){
+            return{todosComprados: false}
         }
     }
 }

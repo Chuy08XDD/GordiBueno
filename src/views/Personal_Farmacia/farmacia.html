@@ -25,6 +25,7 @@
 			<div class="farma-botones">
 			<button class="btn primary" onclick="location.href='../sucursales/bienvenido.html'">Regresar</button>
 			<button id="btn-abrir-registrar" class="btn primary" aria-label="Registrar venta">Registrar venta</button>
+			<button id="btn-cerrar-sesion" class="btn" aria-label="Cerrar sesión">Cerrar Sesión</button>
 			</div>
 
 			<h3> Lista de ventas </h3>
@@ -39,14 +40,26 @@
 			<h3>Registrar venta</h3>
 			<form id="formVenta">
 				<label>Medicamento<br>
-					<select name="medicamento" id="select-medicamento" required>
+					<select name="medicamento" id="select-medicamento">
 						<option value="">Seleccione un medicamento...</option>
 					</select>
 				</label><br>
-				<label>Cantidad<br><input type="number" name="cantidad" id="input-cantidad" value="1" min="1" required></label><br>
+				<label>Cantidad<br><input type="number" name="cantidad" id="input-cantidad" value="1" min="1"></label><br>
 				<label>Precio Unitario<br><input type="number" step="0.01" name="precio_unitario" id="input-precio" readonly></label><br>
-				<label>Total<br><input type="number" step="0.01" name="total" id="input-total" required readonly></label><br>
-				<button type="submit" class="btn primary" aria-label="Guardar venta">Guardar</button>
+				<label>Subtotal<br><input type="number" step="0.01" name="subtotal" id="input-subtotal" readonly></label><br>
+				<button type="button" id="btn-agregar-medicamento" class="btn primary" aria-label="Agregar medicamento">Agregar a la venta</button>
+				
+				<div style="margin-top: 20px;">
+					<h4>Medicamentos en esta venta:</h4>
+					<ul id="medicamentos-agregados" style="list-style: none; padding: 0; max-height: 200px; overflow-y: auto;">
+						<li style="padding: 10px; color: #666;">No hay medicamentos agregados</li>
+					</ul>
+					<div style="margin-top: 10px; font-weight: bold; font-size: 1.1em;">
+						Total de la venta: $<span id="total-venta">0.00</span>
+					</div>
+				</div>
+				
+				<button type="submit" class="btn primary" aria-label="Guardar venta" style="margin-top: 15px;">Guardar venta</button>
 				<button type="button" id="btn-cancelar" class="btn" aria-label="Cancelar">Cancelar</button>
 			</form>
 		</div>
@@ -89,20 +102,100 @@
 	<!-- Script para inicializar el controlador -->
 	<script type="module">
 		import { FarmaciaController } from '../../controllers/FarmaciaController.js';
+		import { AuthController } from '../../controllers/AuthController.js';
+
+		if (!AuthController.verificarSesion() || !AuthController.verificarTipoUsuario('farmaceutico')) {
+			window.location.href = '../Login/login.html';
+		}
 		
-		// Configurar botones y formulario
 		const formPanel = document.getElementById('form-registrar');
 		const formVenta = document.getElementById('formVenta');
 		const btnAbrir = document.getElementById('btn-abrir-registrar');
 		const btnCancelar = document.getElementById('btn-cancelar');
 		
-		// Botón abrir formulario
+		let medicamentosVenta = [];
+		console.log('Variable medicamentosVenta inicializada:', medicamentosVenta);
+		
+		// Exponer funciones para que el controlador pueda usarlas
+		window.cargarMedicamentosEnFormulario = function(medicamentos) {
+			medicamentosVenta = medicamentos.map(vm => {
+				const medicamento = vm.medicamento || vm;
+				return {
+					id_medicamento: medicamento.id_medicamento || vm.id_medicamento,
+					nombre: medicamento.nombre || medicamento.nombre_medicamento || 'Sin nombre',
+					precio: vm.precio_unitario || medicamento.precio || 0,
+					cantidad: vm.cantidad || 1,
+					subtotal: vm.subtotal || ((vm.precio_unitario || medicamento.precio || 0) * (vm.cantidad || 1))
+				};
+			});
+			actualizarListaMedicamentos();
+			console.log('Medicamentos cargados en formulario para edición:', medicamentosVenta.length);
+		};
+		
+		window.limpiarMedicamentosFormulario = function() {
+			medicamentosVenta = [];
+			actualizarListaMedicamentos();
+		};
+		
+		function actualizarListaMedicamentos() {
+			const lista = document.getElementById('medicamentos-agregados');
+			const totalVenta = document.getElementById('total-venta');
+			
+			if (!lista) return;
+			
+			lista.innerHTML = '';
+			
+			if (medicamentosVenta.length === 0) {
+				lista.innerHTML = '<li style="padding: 10px; color: #666;">No hay medicamentos agregados</li>';
+				if (totalVenta) totalVenta.textContent = '0.00';
+				return;
+			}
+			
+			let total = 0;
+			
+			medicamentosVenta.forEach((med, index) => {
+				const li = document.createElement('li');
+				li.style.marginBottom = '10px';
+				li.style.padding = '10px';
+				li.style.backgroundColor = '#f5f5f5';
+				li.style.borderRadius = '5px';
+				li.innerHTML = `
+					<strong>${med.nombre}</strong> - 
+					Cantidad: ${med.cantidad} x $${med.precio.toFixed(2)} = 
+					$${med.subtotal.toFixed(2)}
+					<button type="button" class="btn small" onclick="eliminarMedicamento(${index})" style="margin-left: 10px;">Eliminar</button>
+				`;
+				lista.appendChild(li);
+				total += med.subtotal;
+			});
+			
+			if (totalVenta) totalVenta.textContent = total.toFixed(2);
+		}
+		
+		window.eliminarMedicamento = function(index) {
+			medicamentosVenta.splice(index, 1);
+			actualizarListaMedicamentos();
+		};
+		
 		if (btnAbrir) {
 			btnAbrir.addEventListener('click', () => {
+				const panelEstaOculto = formPanel && formPanel.classList.contains('hidden');
+				
 				if (formVenta) {
 					formVenta.reset();
 					formVenta.removeAttribute('data-edit-id');
 				}
+				
+				// Solo limpiar el array si el panel estaba OCULTO (es una nueva venta)
+				// Si el panel ya estaba visible, NO limpiar para no perder los medicamentos agregados
+				if (panelEstaOculto) {
+					console.log('Limpiando array al abrir panel (estaba oculto)');
+					medicamentosVenta = [];
+					actualizarListaMedicamentos();
+				} else {
+					console.log('Panel ya estaba visible, NO limpiando array. Medicamentos actuales:', medicamentosVenta.length);
+				}
+				
 				if (formPanel) {
 					formPanel.classList.remove('hidden');
 					formPanel.setAttribute('aria-hidden', 'false');
@@ -110,7 +203,6 @@
 			});
 		}
 		
-		// Botón cancelar
 		if (btnCancelar) {
 			btnCancelar.addEventListener('click', () => {
 				if (formPanel) {
@@ -121,23 +213,70 @@
 					formVenta.reset();
 					formVenta.removeAttribute('data-edit-id');
 				}
+				console.log('Limpiando array al cancelar');
+				medicamentosVenta = [];
+				actualizarListaMedicamentos();
 			});
 		}
 		
-		// Submit del formulario
+		const btnAgregar = document.getElementById('btn-agregar-medicamento');
+		if (btnAgregar) {
+			btnAgregar.addEventListener('click', () => {
+				const selectMedicamento = document.getElementById('select-medicamento');
+				const inputCantidad = document.getElementById('input-cantidad');
+				const inputPrecio = document.getElementById('input-precio');
+				const inputSubtotal = document.getElementById('input-subtotal');
+				
+				if (!selectMedicamento || !inputCantidad || !inputPrecio || !inputSubtotal) return;
+				
+				const selectedOption = selectMedicamento.options[selectMedicamento.selectedIndex];
+				if (!selectedOption || !selectedOption.value) {
+					alert('Por favor seleccione un medicamento');
+					return;
+				}
+				
+				const idMedicamento = parseInt(selectedOption.value);
+				const nombre = selectedOption.dataset.nombre || 'Sin nombre';
+				const precio = parseFloat(selectedOption.dataset.precio) || 0;
+				const cantidad = parseFloat(inputCantidad.value) || 1;
+				const subtotal = precio * cantidad;
+				
+				const nuevoMedicamento = {
+					id_medicamento: idMedicamento,
+					nombre: nombre,
+					precio: precio,
+					cantidad: cantidad,
+					subtotal: subtotal
+				};
+				
+				medicamentosVenta.push(nuevoMedicamento);
+				console.log('Medicamento agregado al array:', nuevoMedicamento);
+				console.log('Total de medicamentos en el array ahora:', medicamentosVenta.length);
+				
+				selectMedicamento.value = '';
+				inputCantidad.value = 1;
+				inputPrecio.value = '';
+				inputSubtotal.value = '';
+				
+				actualizarListaMedicamentos();
+			});
+		}
+		
 		if (formVenta) {
 			formVenta.addEventListener('submit', async (e) => {
 				e.preventDefault();
-				const formData = new FormData(formVenta);
-				const ventaData = {
-					id_medicamento: formData.get('medicamento'),
-					cantidad: formData.get('cantidad'),
-					total: formData.get('total')
-				};
+				//aqui pongo logs porque no se que esta pasandooooooo 
+				console.log('=== SUBMIT DEL FORMULARIO ===');
+				console.log('Array medicamentosVenta antes de enviar:', medicamentosVenta);
+				console.log('Tipo de variable:', typeof medicamentosVenta);
+				console.log('Es array?', Array.isArray(medicamentosVenta));
+				console.log('Longitud del array:', medicamentosVenta.length);
+				console.log('Referencia de la variable:', medicamentosVenta);
+				console.log('Contenido completo del array:', JSON.stringify(medicamentosVenta, null, 2));
 				
-				// Validar que se haya seleccionado un medicamento
-				if (!ventaData.id_medicamento) {
-					alert('Por favor seleccione un medicamento');
+				if (medicamentosVenta.length === 0) {
+					console.warn('El array medicamentosVenta está vacío');
+					alert('Por favor agregue al menos un medicamento a la venta');
 					return;
 				}
 				
@@ -145,22 +284,25 @@
 					const editId = formVenta.dataset.editId;
 					
 					if (editId) {
-						// Actualizar venta existente
-						const { venta, error } = await FarmaciaController.actualizarVenta(parseInt(editId), ventaData);
-						if (error) {
-							alert('Error al actualizar la venta');
-							return;
-						}
+						// TODO: Implementar actualización de venta
+						alert('La funcionalidad de editar ventas aún no está implementada. Por favor, elimina y crea una nueva venta.');
+						return;
 					} else {
-						// Crear nueva venta
-						const { venta, error } = await FarmaciaController.crearVenta(ventaData);
+						console.log('Enviando array al controller. Cantidad de medicamentos:', medicamentosVenta.length);
+						const { venta, error } = await FarmaciaController.crearVenta(medicamentosVenta);
+						console.log('Respuesta del controller:', { venta, error });
 						if (error) {
-							alert('Error al crear la venta');
+							console.error('Error recibido del controller:', error);
+							alert('Error al crear la venta: ' + (error.message || 'Error desconocido'));
 							return;
 						}
+						
+						alert('Venta registrada exitosamente');
 					}
 					
-					// Ocultar formulario y recargar datos
+					medicamentosVenta = [];
+					actualizarListaMedicamentos();
+					
 					if (formPanel) {
 						formPanel.classList.add('hidden');
 						formPanel.setAttribute('aria-hidden', 'true');
@@ -168,13 +310,11 @@
 					formVenta.reset();
 					formVenta.removeAttribute('data-edit-id');
 					
-					// Limpiar campos calculados
 					const inputPrecio = document.getElementById('input-precio');
-					const inputTotal = document.getElementById('input-total');
+					const inputSubtotal = document.getElementById('input-subtotal');
 					if (inputPrecio) inputPrecio.value = '';
-					if (inputTotal) inputTotal.value = '';
+					if (inputSubtotal) inputSubtotal.value = '';
 					
-					// Recargar ventas
 					FarmaciaController.inicializar();
 				} catch (err) {
 					console.error('Error al procesar venta:', err);
@@ -183,10 +323,16 @@
 			});
 		}
 		
-		// Inicializar cuando el DOM esté listo
 		document.addEventListener('DOMContentLoaded', () => {
 			FarmaciaController.inicializar();
 		});
+
+		const btnCerrarSesion = document.getElementById('btn-cerrar-sesion');
+		if (btnCerrarSesion) {
+			btnCerrarSesion.addEventListener('click', () => {
+				AuthController.cerrarSesion();
+			});
+		}
 	</script>
 </body>
 </html>

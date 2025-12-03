@@ -13,6 +13,7 @@ export class Venta {
         // Campos 
         this.producto = data.producto || '';
         this.cantidad = data.cantidad || 1;
+        this.venta_medicamento = data.venta_medicamento || null;
     }
 
     static fromJSON(data) {

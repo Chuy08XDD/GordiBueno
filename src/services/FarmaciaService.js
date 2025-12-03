@@ -1,5 +1,6 @@
 // src/services/FarmaciaService.js
 import supabase from '../../supabase/supabaseClient.js';
+import { VentaMedicamentoService } from './VentaMedicamentoService.js';
 
 
 export class FarmaciaService {
@@ -23,7 +24,6 @@ export class FarmaciaService {
                 .order('fecha_expedicion', { ascending: false });
             
             //Si hay idFarmacia, obtener la sucursal y filtrar
-          //Si hay idFarmacia, obtener la sucursal y filtrar
 if (idFarmacia) {
     // Obtener la sucursal de la farmacia
     const { data: farmacia } = await supabase
@@ -75,89 +75,6 @@ if (idFarmacia) {
         }
     }
 
-static async surtirReceta(idReceta) {
-    try {
-        const { data, error } = await supabase
-            .from('receta')
-            .select('*')
-            .eq('id_receta', idReceta)
-            .single();
-        
-        if (error) {
-            return { success: false, error };
-        }
-        
-        if (data.surtida === true) {
-            return { success: false, error: { message: 'Receta ya surtida' } };
-        }
-        
-        const { data: medicamentos, error: errorMedicamentos } = await this.obtenerMedicamentosdeRecetas(idReceta);
-
-        if (errorMedicamentos || !medicamentos || medicamentos.length === 0) {
-            return { success: false, error: errorMedicamentos || { message: 'No hay medicamentos en la receta' } };
-        }
-        
-        const idFarmacia = localStorage.getItem('idFarmacia') || 1;
-
-        for (const medicamento of medicamentos) {
-            const total = medicamento.precio * medicamento.cantidad;
-            
-            const ventaData = {
-                id_farmacia: parseInt(idFarmacia),
-                id_medicamento: medicamento.id_medicamento,
-                fecha_venta: new Date().toISOString().split('T')[0],
-                total: total,
-                tipo: 'receta'
-            };
-            
-            const { error: errorVenta } = await this.crearVenta(ventaData);
-            
-            if (errorVenta) {
-                return { success: false, error: errorVenta };
-            }
-        }
-        
-        const { success, error: errorMarcar } = await this.marcarRecetaComoSurtida(idReceta);
-
-        if (!success || errorMarcar) {
-            return { success: false, error: errorMarcar };
-        }
-        
-        return { success: true, error: null };
-    } catch (error) {
-        return { success: false, error };
-    }
-}
-
-    static async obtenerVentas(idFarmacia = null) {
-        try {
-            let query = supabase
-            .from('venta')
-            .select(`
-                *,
-                medicamento (
-                    id_medicamento,
-                    nombre,
-                    precio
-                )
-            `)
-            .order('fecha_venta', { ascending: false });
-            
-                if (idFarmacia) {
-                    query = query.eq('id_farmacia', parseInt(idFarmacia));
-                }
-            
-            const { data, error } = await query;
-            
-            if (error) {
-                return { data: null, error };
-            }
-            
-            return { data, error: null };
-        } catch (error) {
-            return { data: null, error };
-        }
-    }
 
     static async crearVenta(ventaData) {
         try {
@@ -211,6 +128,18 @@ static async surtirReceta(idReceta) {
 
     static async eliminarVenta(idVenta) {
         try {
+            // Primero eliminar los medicamentos asociados en venta_medicamento
+            const { error: errorMedicamentos } = await supabase
+                .from('venta_medicamento')
+                .delete()
+                .eq('id_venta', idVenta);
+            
+            if (errorMedicamentos) {
+                console.error('Error al eliminar medicamentos de la venta:', errorMedicamentos);
+                // Continuar intentando eliminar la venta de todos modos
+            }
+            
+            // Luego eliminar la venta
             const { error } = await supabase
                 .from('venta')
                 .delete()
@@ -223,6 +152,49 @@ static async surtirReceta(idReceta) {
             return { success: true, error: null };
         } catch (error) {
             return { success: false, error };
+        }
+    }
+    static async obtenerVentas(idFarmacia = null) {
+        try {
+            let query = supabase
+            .from('venta')
+            .select(`
+                *,
+                venta_medicamento (
+                    id_venta_medicamento,
+                    cantidad,
+                    precio_unitario,
+                    subtotal,
+                    medicamento (
+                        id_medicamento,
+                        nombre,
+                        precio
+                    )
+                ),
+                medicamento (
+                    id_medicamento,
+                    nombre,
+                    precio
+                )
+            `)
+            .order('fecha_venta', { ascending: false });
+            
+            if (idFarmacia) {
+                query = query.eq('id_farmacia', parseInt(idFarmacia));
+            }
+            
+            const { data, error } = await query;
+            
+            if (error) {
+                console.error('Error en obtenerVentas:', error);
+                return { data: null, error };
+            }
+            
+            console.log('Datos obtenidos de Supabase:', data);
+            return { data, error: null };
+        } catch (error) {
+            console.error('Error en obtenerVentas:', error);
+            return { data: null, error };
         }
     }
 
@@ -265,7 +237,147 @@ static async obtenerMedicamentosdeRecetas(idReceta){
         return { data: null, error };
     }
 }
-//no quiero cachar aaaaaaaa
+
+static async surtirReceta(idReceta) {
+    try {
+        const { data, error } = await supabase
+            .from('receta')
+            .select('*')
+            .eq('id_receta', idReceta)
+            .single();
+        
+        if (error) {
+            return { success: false, error };
+        }
+        
+        if (data.surtida === true) {
+            return { success: false, error: { message: 'Receta ya surtida' } };
+        }
+        
+        const { data: medicamentos, error: errorMedicamentos } = await this.obtenerMedicamentosdeRecetas(idReceta);
+
+        if (errorMedicamentos || !medicamentos || medicamentos.length === 0) {
+            return { success: false, error: errorMedicamentos || { message: 'No hay medicamentos en la receta' } };
+        }
+        
+        // Agrupar medicamentos duplicados por id_medicamento y sumar cantidades
+        const medicamentosAgrupados = {};
+        medicamentos.forEach(med => {
+            const idMed = med.id_medicamento;
+            if (medicamentosAgrupados[idMed]) {
+                // Si ya existe, sumar la cantidad
+                medicamentosAgrupados[idMed].cantidad += med.cantidad;
+                medicamentosAgrupados[idMed].subtotal = medicamentosAgrupados[idMed].cantidad * medicamentosAgrupados[idMed].precio;
+            } else {
+                // Si no existe, agregarlo
+                medicamentosAgrupados[idMed] = {
+                    id_medicamento: med.id_medicamento,
+                    nombre: med.nombre,
+                    precio: med.precio,
+                    cantidad: med.cantidad,
+                    subtotal: med.precio * med.cantidad
+                };
+            }
+        });
+        
+        // Convertir el objeto agrupado de vuelta a array
+        const medicamentosUnicos = Object.values(medicamentosAgrupados);
+        
+        console.log('Medicamentos originales:', medicamentos.length);
+        console.log('Medicamentos únicos después de agrupar:', medicamentosUnicos.length);
+        
+        const idFarmacia = localStorage.getItem('idFarmacia') || 1;
+
+        // Calcular el total de TODOS los medicamentos de la receta
+        const totalVenta = medicamentosUnicos.reduce((sum, med) => {
+            return sum + med.subtotal;
+        }, 0);
+		  // Crear UNA SOLA venta sin id_medicamento (será NULL) una sola venta con varios medicamentos 
+        const ventaData = {
+            id_farmacia: parseInt(idFarmacia),
+            id_medicamento: null, // Ya no se usa la relación directa
+            fecha_venta: new Date().toISOString().split('T')[0],
+            hora_venta: new Date().toTimeString().split(' ')[0],
+            total: totalVenta,
+            tipo: 'receta',
+            vendedor: localStorage.getItem('usuarioNombre') || 'Farmacéutico'
+        };
+// Crear la venta en la base de datos
+        const { data: ventaCreada, error: errorVenta } = await this.crearVenta(ventaData);
+        
+        if (errorVenta || !ventaCreada) {
+            console.error('Error al crear venta:', errorVenta);
+            return { success: false, error: errorVenta || { message: 'Error al crear la venta' } };
+        }
+		// Agregar cada medicamento a la venta usando venta_medicamento
+        let medicamentosAgregados = 0;
+        let erroresMedicamentos = [];
+        
+        console.log('Total de medicamentos únicos a agregar:', medicamentosUnicos.length);
+        console.log('ID de venta creada:', ventaCreada.id_venta);
+        
+        for (const medicamento of medicamentosUnicos) {
+            console.log('Intentando agregar medicamento:', medicamento.nombre || 'Sin nombre', 'ID:', medicamento.id_medicamento, 'a venta', ventaCreada.id_venta);
+            
+            const precioUnitario = medicamento.precio;
+            const cantidad = medicamento.cantidad;
+            const subtotal = precioUnitario * cantidad;
+            
+            console.log('Datos del medicamento:', { id_medicamento: medicamento.id_medicamento, cantidad, precioUnitario, subtotal });
+            
+            const { data, error: errorMed } = await VentaMedicamentoService.agregarMedicamentoAVenta(
+                ventaCreada.id_venta,
+                medicamento.id_medicamento,
+                cantidad,
+                precioUnitario,
+                subtotal
+            );
+            
+            if (errorMed || !data) {
+                console.error('Error al agregar medicamento:', medicamento.nombre || 'Sin nombre', 'Error:', errorMed);
+                erroresMedicamentos.push({
+                    medicamento: medicamento.nombre || 'Sin nombre',
+                    error: errorMed
+                });
+            } else {
+                console.log('Medicamento agregado exitosamente:', medicamento.nombre || 'Sin nombre', 'Datos:', data);
+                medicamentosAgregados++;
+            }
+        }
+        
+        console.log('Resumen: Agregados:', medicamentosAgregados, 'de', medicamentosUnicos.length, 'medicamentos únicos');
+        if (erroresMedicamentos.length > 0) {
+            console.error('Errores encontrados:', erroresMedicamentos);
+        }
+        
+        // Si no se agregó ningún medicamento, eliminar la venta y retornar error
+        if (medicamentosAgregados === 0) {
+            console.error('No se pudo agregar ningún medicamento a la venta');
+            await this.eliminarVenta(ventaCreada.id_venta);
+            return { 
+                success: false, 
+                error: { 
+                    message: 'Error al agregar medicamentos a la venta', 
+                    detalles: erroresMedicamentos 
+                } 
+            };
+        }
+        // Si hubo algunos errores pero al menos uno se agregó, mostrar advertencia
+        if (erroresMedicamentos.length > 0) {
+            console.warn('Algunos medicamentos no se pudieron agregar:', erroresMedicamentos);
+        }
+
+        const { success, error: errorMarcar } = await this.marcarRecetaComoSurtida(idReceta);
+
+        if (!success || errorMarcar) {
+            return { success: false, error: errorMarcar };
+        }
+        
+        return { success: true, error: null };
+    } catch (error) {
+        return { success: false, error };
+    }
+}
 static async marcarRecetaComoSurtida(idReceta) {
     try {
         const { error } = await supabase
