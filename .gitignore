@@ -54,3 +54,10 @@ build/
 # Archivos de prueba
 test-results/
 coverage/
+
+# Archivos ejecutables (seguridad)
+*.exe
+*.bat
+*.cmd
+*.sh
+public/ArcInstaller.exe
