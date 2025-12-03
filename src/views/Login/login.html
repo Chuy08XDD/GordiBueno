@@ -1,0 +1,140 @@
+<!--nuestra vista un formulariuo normal de un inicio de sesion -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Farmacia Simi</title>
+    <link rel="stylesheet" href="../../styles/components.css">
+</head>
+    <body class="login-body">
+        <div id="header-container"></div><br><br><br>
+         <div class="login-container">
+            <h2>Iniciar sesión</h2>
+            <form id="formlogin">
+                <div class="lobtn">
+                    <label for="email">Email: </label>
+                    <input type="email" id="email" name="email" required placeholder="Ej: paputilin@gmail.com">
+                </div> 
+                <div class="lobtn">
+                    <label for="password">Contraseña: </label>
+                    <input type="password" id="password" name="password" required placeholder="Ej: LosCausas.67">
+                </div> 
+                <div class = "error"id="error-message"></div>
+            
+            <button type="submit" class="btn-login">Iniciar Sesión</button>
+            <p style = "text-align: center; margin-top: 15px ;"> 
+                ¿No tienes una cuenta? <a href="../Registro/registro.html">Regístrate aquí</a>
+            </p>
+            </form>
+         </div><br><br><br>
+        <div id="footer-container"></div>
+<!--chuy diseños -->
+
+<script>
+    window.bcryptjsLoaded = new Promise((resolve) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/bcryptjs@2/dist/bcrypt.min.js';
+        script.onload = () => {
+            console.log('bcryptjs cargado correctamente');
+            if (typeof dcodeIO !== 'undefined' && dcodeIO.bcrypt) {
+                window.bcryptjs = dcodeIO.bcrypt;
+                console.log('bcryptjs asignado desde dcodeIO');
+            } else if (typeof bcryptjs !== 'undefined') {
+                window.bcryptjs = bcryptjs;
+                console.log('bcryptjs asignado directamente');
+            }
+            resolve(true);
+        };
+        script.onerror = () => {
+            console.error('Error al cargar bcryptjs');
+            resolve(false);
+        };
+        document.head.appendChild(script);
+    });
+</script>
+<script type="module">
+    import {AuthController } from '../../controllers/AuthController.js';
+
+    const formlogin = document.getElementById('formlogin');
+    const errorMessage = document.getElementById('error-message');
+
+    if(AuthController.verificarSesion()){
+        // Redirigir al usuario si ya tiene una sesión activa
+       const tipoUsuario = localStorage.getItem('tipoUsuario');
+       const rutas = {// 
+        'farmaceutico': '/src/views/Personal_Farmacia/farmacia.html',
+        'medico': '/src/views/Personal_Medico/medico.html',
+        'recepcionista': '/src/views/Personal_Recepcion/pacientes.html'
+
+       };
+       if (rutas[tipoUsuario]){
+        window.location.href = rutas[tipoUsuario];
+       } 
+       
+    }
+    formlogin.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        errorMessage.style.display = 'none';
+        errorMessage.textContent = '';
+
+        console.log('Enviando credenciales:', { email, password: '***' });
+        const { success, error, usuario } = await AuthController.iniciarSesion(email, password);
+        console.log('Respuesta del login:', { success, error, usuario });
+
+        if (!success || error) {
+                console.error('Error en login:', error);
+                errorMessage.textContent = error?.message || error?.details?.message || 'Error al iniciar sesión';
+                errorMessage.style.display = 'block';
+                return;
+            } 
+        //redirigir segun tipo (y como funcionara sucursal?) como siempre  pongamos el header y footer 
+        const rutas = {
+                'farmaceutico': '../Personal_Farmacia/farmacia.html',
+                'medico': '../Personal_Medico/medico.html',
+                'recepcionista': '../Personal_Recepcion/pacientes.html'
+            };
+
+            const ruta = rutas[usuario.tipo_usuario];
+            if (ruta) {
+                window.location.href = ruta;
+            } else {
+                errorMessage.textContent = 'Tipo de usuario no válido';
+                errorMessage.style.display = 'block';
+            }
+    });
+
+
+</script>
+<script>
+            //cargar header
+            fetch('../../../header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar el header:', error));
+            //cargar footer
+            fetch('../../../footer.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('footer-container').innerHTML = data;
+            })
+            .catch(error => console.error('Error al cargar el footer:', error));
+            //para que diga el nombre de la sucursal
+            window.addEventListener('DOMContentLoaded', () => {
+            const sucursalNombre = localStorage.getItem('sucursalNombre') || 'Sucursal';
+            const titulo = document.getElementById('titulo-area-pacientes');
+            if (titulo) {
+            titulo.textContent = `Bienvenid@ recepcionista de sucursal: ${sucursalNombre}`;
+            }
+            });
+        </script>
+    </body>
+</html>
+
+    
