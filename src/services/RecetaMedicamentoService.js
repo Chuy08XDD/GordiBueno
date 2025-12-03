@@ -7,16 +7,19 @@ export class RecetaMedicamentoService {
     static async obtenerRecetaMedicamentoporid(id_receta) {
         try {
             const { data, error } = await supabase
-            .from('receta_medicamento')
-            .select(`
-            id_receta,
-            id_medicamento,
-            cantidad,
-            dosis,
-            comprado,
-            medicamento ( nombre )
-            `)
-            .eq('id_receta', id_receta);
+                .from('receta_medicamento')
+                .select(`
+                    id_receta,
+                    id_medicamento,
+                    cantidad,
+                    dosis,
+                    comprado,
+                    medicamento (
+                        nombre,
+                        precio
+                    )
+                `)
+                .eq('id_receta', id_receta);
 
             if (error) return { data: null, error };
             return { data, error: null };
@@ -25,6 +28,7 @@ export class RecetaMedicamentoService {
             return { data: null, error };
         }
     }
+
 
     // CREAR medicamento en receta
     static async crearRecetaMedicamento(info) {
@@ -75,4 +79,45 @@ export class RecetaMedicamentoService {
             return { data: null, error };
         }
     }
+    //funcion para obtener medicamentos de una receta (para farmacia controller)
+    static async obtenerMedicamentosDeReceta(idReceta){
+        try{
+            const {data,error} = await supabase
+            .from ('receta_medicamento')
+            .select(`
+                *,
+                medicamento: id_medicamento(
+                nombre,
+                descripcion,
+                precio
+                )
+                `)
+                .eq('id_receta',idReceta);
+            if(error){
+                return{data:null,error}
+            }
+            return{data,error:null};
+        }
+        catch(error){
+            return{data:null,error}
+        }
+    }
+    // Marca un registro receta_medicamento como comprado (true)
+    static async marcarComoComprado(id_receta, id_medicamento) {
+    try {
+        const { data, error } = await supabase
+            .from('receta_medicamento')
+            .update({ comprado: true })
+            .eq('id_receta', id_receta)
+            .eq('id_medicamento', id_medicamento)
+            .select();
+
+        if (error) return { data: null, error };
+        return { data, error: null };
+
+    } catch (error) {
+        return { data: null, error };
+    }
+}
+
 }

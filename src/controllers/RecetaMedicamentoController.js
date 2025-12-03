@@ -14,4 +14,17 @@ export class RecetaMedicamentoController {
             return { RecetaMedicamento: null, error };
         }
     }
+    static async marcarComoComprado(id_receta, id_medicamento) {
+        try {
+            const { data, error } = await RecetaMedicamentoService.marcarComoComprado(id_receta, id_medicamento);
+
+            if (error) return { success: false, error };
+
+            return { success: true, data, error: null };
+            
+        } catch (err) {
+            return { success: false, error: err };
+        }
+    }
+
 }

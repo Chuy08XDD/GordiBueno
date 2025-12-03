@@ -75,4 +75,72 @@ static async agregarMedicamentoAReceta(idReceta, idMedicamento, cantidad, dosis,
         if (error) return { data: null, error };
         return { data, error: null };
     }
+    //para editar
+   static async obtenerRecetaporCita(id_cita) {
+    try {
+        const { data: receta, error } = await supabase
+            .from('receta')
+            .select(`
+                id_receta,
+                receta_medicamento (
+                    id_receta,
+                    id_medicamento,
+                    cantidad,
+                    dosis,
+                    comprado,
+                    medicamento (nombre, precio)
+                )
+            `)
+            .eq('id_cita', id_cita)
+            .maybeSingle();  // ← cambia .single() por esto
+
+        if (error) return { data: null, error };
+
+        return { data: receta, error: null };
+    }
+    catch (error) {
+        return { data: null, error };
+    }
+}
+
+// Actualizar medicamento en la receta
+// Actualizar medicamento en la receta usando la PK compuesta
+static async actualizarMedicamentoReceta(idReceta, idMedicamentoOld, idMedicamentoNew, cantidad, dosis) {
+    try {
+        const { data, error } = await supabase
+            .from('receta_medicamento')
+            .update({
+                id_medicamento: idMedicamentoNew,
+                cantidad,
+                dosis
+            })
+            .eq('id_receta', idReceta)
+            .eq('id_medicamento', idMedicamentoOld)
+            .select()
+            .single();
+
+        if (error) return { data: null, error };
+        return { data, error: null };
+
+    } catch (error) {
+        return { data: null, error };
+    }
+}
+
+
+// Eliminar medicamento de receta (llave compuesta)
+static async eliminarMedicamentoReceta(id_receta, id_medicamento) {
+    try {
+        const { error } = await supabase
+            .from('receta_medicamento')
+            .delete()
+            .eq('id_receta', id_receta)
+            .eq('id_medicamento', id_medicamento);
+
+        return { error };
+    } catch (error) {
+        return { error };
+    }
+}
+
 }
