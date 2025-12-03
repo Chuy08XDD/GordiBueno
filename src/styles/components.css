@@ -14,11 +14,6 @@ GRACIAS
     box-sizing: border-box;
 }
 
-@keyframes subirBurbujas {
-    0% { transform: translateY(20px); }
-    100% { transform: translateY(-40px); }
-}
-
 @keyframes auroraMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -40,6 +35,17 @@ GRACIAS
         filter: blur(0);
         letter-spacing: 0;
     }
+}
+
+@keyframes glowBreath {
+    0% { box-shadow: 0 0 5px rgba(0, 220, 220, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(0, 220, 220, 0.7); }
+    100% { box-shadow: 0 0 5px rgba(0, 220, 220, 0.3); }
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
 }
 
 body {
@@ -210,6 +216,7 @@ body {
 }
 
 .welcome-box {
+    animation: fadeIn 0.75s ease-in-out;
     position: absolute;
     left: 80px;
     top: 50%;
@@ -236,7 +243,7 @@ body {
     letter-spacing: -2px;
 }
 
-.subtitle {
+.subtitle { /*q onda maria :v*/
     font-size: 32px;
     color: #49CCCC;
     margin-bottom: 20px;
@@ -245,8 +252,12 @@ body {
 }
 
 .btn-sucursales {
+    animation: fadeIn 1.2s ease-in-out;
     display: inline-block;
-    background: #16C1C8;
+    background: linear-gradient(120deg, #7CD7CF, #50aeb3, #12e0e7, rgb(156, 223, 223));
+    background-size: 300% 300%;
+    animation: auroraMove 10s ease infinite alternate;
+    filter: blur(0.5px);
     color: white;
     padding: 22px 50px;
     font-size: 24px;
@@ -259,7 +270,6 @@ body {
 }
 
 .btn-sucursales:hover {
-    background: #49CCCC;
     transform: translateY(-4px) scale(1.05);
     box-shadow: 0 12px 40px rgba(73, 204, 204, 0.6);
 }
@@ -584,6 +594,7 @@ body {
     }
 /*Estilos personal farmacia*/
 
+
 /* Reset ligero */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -658,7 +669,7 @@ body {
   box-shadow: var(--shadow);
 }
 .menu {
-  width:360px;
+  width:450px;
   min-width:240px;
   background:var(--card);
   border-radius: var(--radius);
@@ -759,11 +770,34 @@ select {
 .tablita thead { background: linear-gradient(90deg,#fafcff,#f3f8ff); }
 .tablita th, .tablita td {
   padding:10px 12px;
-  text-align:left;
+  text-align:center;
   font-size:0.95rem;
   border-bottom:1px solid #f1f5fb;
 }
-.tablita tbody tr:hover { background: rgba(13,110,253,0.02); }
+.tablita tbody tr:hover { 
+    background: rgba(13,110,253,0.02);
+}
+/* colors for tablita*/
+/* ESTADOS DE RECETAS */
+
+/* Surtida = verde */
+.fila-lista td {
+    background: yellow !important;
+}
+
+.fila-surtida td {
+    background: #aaffaa !important;
+}
+
+.fila-parcial td {
+    background: #ffcf96 !important;
+}
+
+.fila-pendiente td {
+    background: #ff9a9a !important;
+}
+
+
 
 /* Lists */
 .ventas-ul { list-style:none; padding:0; margin:0; }
@@ -809,7 +843,7 @@ body {
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 40px auto;
     background: var(--c5);
     padding: 30px;
@@ -958,7 +992,7 @@ body {
 }
 
 /*Estilos personal medico*/
-.medico-bienvenida {
+    .medico-bienvenida {
         padding: 40px 20px;
         text-align: center;
         color: #ffffff;
@@ -977,46 +1011,56 @@ body {
         margin: 10px;
         font-size: 18px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, letterDraw 1.2s ease forwards;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
-        border-radius: 12px;
-        border: none;
         cursor: pointer;
-        transition: 0.3s;
+        border: 2px solid #11d0d0;
+        border-radius: 14px;
+        transition: .3s ease;
+    }
+    .botonregreso:hover{
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 0 12px #11d0d0, 0 0 22px #11d0d0;
+        border-color: #22f1f1;
     }
     .botonagregar {
         margin: 10px;
         font-size: 18px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, letterDraw 1.2s ease forwards;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
-        border-radius: 12px;
-        border: none;
         cursor: pointer;
-        transition: 0.3s;
-    }
-    .botonregreso:hover{
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
+        border: 2px solid #11d0d0;
+        border-radius: 14px;
+        transition: .3s ease;
     }
     .botonagregar:hover{
         transform: translateY(-5px);
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
+        box-shadow: 0 0 12px #11d0d0, 0 0 22px #11d0d0;
+        border-color: #22f1f1;
     }
     .medico-personal{
         color: #16C1C8;
         text-align: center;
     }
+    .medico-personal h2 {
+        animation: letterDraw 0.8s ease forwards;
+    }
     .medico-personal table{
         border-collapse: collapse;
         width: 100%;
         margin-top: 20px;
+        animation: letterDraw 1s ease forwards;
     }
     .medico-personal th,
     .medico-personal td{
@@ -1029,6 +1073,12 @@ body {
         color: #ffffff;
         align-items: center;
     }
+    .medico-personal tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
     .medico-personal tbody tr{
         color: #16C1C8;
         background: #ffffff;
@@ -1037,47 +1087,59 @@ body {
         background: #AEE1D3;
     }
     .citas-medico{
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 5px;
         border-radius: 8px;
         margin: 5px;
     }
-    .citas-medico:hover{
-        background: #12413d;
+    .citas-medico:hover {
         transform: translateY(-3px);
         transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
     }
     .editar-medico{
-        background: #d1c372;
+        background: linear-gradient(120deg, #d1c372, #dbc440, #c7b030, rgb(206, 203, 39));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 5px;
         border-radius: 8px;
         margin: 5px;
     }
     .editar-medico:hover{
-        background: #dadd17;
         transform: translateY(-3px);
         transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(197, 200, 22, 0.4);
     }
     .eliminar-medico{
-        background: #330505;
+        background: linear-gradient(120deg, #df0c0c, #d64343, #df0c0c, rgb(161, 36, 36));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 5px;
         border-radius: 8px;
         margin: 5px;
     }
       .eliminar-medico:hover{
-        background: #dd1717;
         transform: translateY(-3px);
         transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(156, 9, 9, 0.4);
     }
     /* AGREGAR DOCTOR NO EL SIMI EL OTRO JEJEJE */
     .agregar-medico{
         margin: 10px;
         font-size: 18px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #50aeb3, #12e0e7, rgb(156, 223, 223));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, fadeIn 1s ease-in-out;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1093,7 +1155,10 @@ body {
         margin: 10px;
         font-size: 18px;
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #50aeb3, #12e0e7, rgb(156, 223, 223));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1105,7 +1170,10 @@ body {
         margin: 10px;
         font-size: 18px;
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #50aeb3, #12e0e7, rgb(156, 223, 223));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, fadeIn 1.4s ease-in-out;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1117,34 +1185,45 @@ body {
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
     }
     .agregar-medico:hover{
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
     }
     .cancelar-medico:hover{
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
     }
-    .form-section h2 {
+    .añadir-medico {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .añadir-medico h2 {
+        animation: letterDraw 0.8s ease forwards;
         font-size: 30px;
-        padding: 40px 20px;
-        background: #49CCCC;
+        padding: 40px;
+        text-align: center;
+        color: #ffffff;
+    }
+    .añadir-medico p {
+        animation: letterDraw 1s ease forwards;
+        font-size: 20px;
+        padding: 20px;
         text-align: center;
         color: #ffffff;
     }
     .agregar-medico-general {
         max-width: 700px;
-        margin: 20px auto;
-        padding: 30px;
+        margin: auto;
+        padding: 40px;
+        border-radius: 20px;
         background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        position: relative;
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .nombre-medico, .curp-medico, .especialidad-medico, .telefono-medico, .edad-medico, .direccion-medico, .codigo-medico {
         margin-bottom: 18px;
@@ -1155,28 +1234,53 @@ body {
         margin-bottom: 6px;
         font-weight: 600;
         color: #16C1C8;
+        animation: fadeIn 1.2s ease-in-out;
     }
     .nombre-medico input, .curp-medico input, .especialidad-medico input, .telefono-medico input, .edad-medico input, .direccion-medico input, .codigo-medico input {
-        width: 500px;
-        padding: 10px 14px;
-        border: 1px solid #cfcfcf;
-        border-radius: 10px;
-        font-size: 15px;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        background: transparent;
+        transition: 0.3s;
+        animation: fadeIn 1.4s ease-in-out;
     }
+
+    .especialidad-medico select {
+        padding: 12px;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: fadeIn 1.4s ease-in-out, gradientMove 3s infinite;
+}
+    .especialidad-medico select:focus {
+        transform: scale(1.01);
+        padding: 12px;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: gradientMove 3s infinite, fadeIn 1.4s ease-in-out;
+    }
+
     .nombre-medico input:focus, .curp-medico input:focus, .especialidad-medico input:focus, .telefono-medico input:focus, .edad-medico input:focus, .direccion-medico input:focus, .codigo-medico input:focus {
-        border-color: #16C1C8;
-        box-shadow: 0 0 8px rgba(22, 193, 200, 0.3);
-        outline: none;
+        border-bottom: 2px solid #00caca;
+    box-shadow: 0 4px 6px -4px #00caca;
+    outline: none;
     }
 
     /* EDITAR MEDICO */
     .actualizar-medico {
         margin: 10px;
-        font-size: 18px; 
+        font-size: 18px;
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #50aeb3, #12e0e7, rgb(156, 223, 223));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, fadeIn 1.2s ease-in-out;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1188,22 +1292,28 @@ body {
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
     }
-    .form-section h2 {
+    .titulo-editar-medico {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .titulo-editar-medico h2 {
+        animation: letterDraw 0.8s ease forwards;
         font-size: 30px;
-        padding: 40px 20px;
-        background: #49CCCC;
+        padding: 40px;
         text-align: center;
         color: #ffffff;
     }
     .editar-medico-general {
         max-width: 700px;
         margin: 20px auto;
-        padding: 30px;
+        padding: 40px;
+        border-radius: 20px;
         background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        position: relative;
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .edit-nombre-medico, .edit-curp-medico, .edit-especialidad-medico, .edit-telefono-medico, .edit-edad-medico, .edit-direccion-medico, .edit-codigo-medico {
         margin-bottom: 18px;
@@ -1214,15 +1324,35 @@ body {
         margin-bottom: 6px;
         font-weight: 600;
         color: #16C1C8;
+        animation: fadeIn 1.2s ease-in-out;
     }
     .edit-nombre-medico input, .edit-curp-medico input, .edit-especialidad-medico input, .edit-telefono-medico input, .edit-edad-medico input, .edit-direccion-medico input, .edit-codigo-medico input {
-        width: 500px;
-        padding: 10px 14px;
-        border: 1px solid #cfcfcf;
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        background: transparent;
+        transition: 0.3s;
+        animation: fadeIn 1.4s ease-in-out;
+    }
+    .edit-especialidad-medico select {
+        padding: 12px;
         border-radius: 10px;
-        font-size: 15px;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: fadeIn 1.4s ease-in-out, gradientMove 3s infinite;
+}
+    .edit-especialidad-medico select:focus {
+        transform: scale(1.01);
+        padding: 12px;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: gradientMove 3s infinite, fadeIn 1.4s ease-in-out;
     }
     .edit-nombre-medico input:focus, .edit-curp-medico input:focus, .edit-especialidad-medico input:focus, .edit-telefono-medico input:focus, .edit-edad-medico input:focus, .edit-direccion-medico input:focus, .edit-codigo-medico input:focus {
         border-color: #16C1C8;
@@ -1243,42 +1373,28 @@ body {
         margin-top: -70px;
         padding-right: 0px; /* Ajusta si quieres que estén más pegados o separados del borde */
     }
-    .licencia button {
+    .boton-medico, .boton-licencia {
         margin: 10px;
-        font-size: 12px; 
+        font-size: 18px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, letterDraw 1.2s ease forwards;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
-        border-radius: 12px;
-        border: none;
         cursor: pointer;
-        transition: 0.3s;
+        border: 2px solid #11d0d0;
+        border-radius: 14px;
+        transition: .3s ease;
     }
-    .licencia button:hover {
+    .boton-medico:hover, .boton-licencia:hover {
         transform: translateY(-5px);
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
+        box-shadow: 0 0 12px #11d0d0, 0 0 22px #11d0d0;
+        border-color: #22f1f1;
     }
-    .boton-medico button, .boton-licencia button {
-        margin: 10px;
-        font-size: 18px;
-        font-weight: 600;
-        background: #16C1C8;
-        color: #ffffff;
-        padding: 12px 20px;
-        border-radius: 12px;
-        border: none;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-    .boton-medico button:hover, .boton-licencia button:hover {
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
-    }
+    /**/
     .citas-del-medico {
         text-align: center;
         width: 80%;
@@ -1288,13 +1404,16 @@ body {
         border-radius: 12px;
         transition: 0.3s ease;
         box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
-        
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .citas-del-medico button {
         margin: 10px;
         font-size: 12px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1306,17 +1425,6 @@ body {
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
-    }
-    .licencia {
-        text-align: center;
-        width: 80%;
-        margin: 30px auto;
-        padding: 30px;
-        background: #ffffff;
-        border-radius: 12px;
-        transition: 0.3s ease;
-        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
     }
     .citas-del-medico table{
         width: 100%;
@@ -1338,12 +1446,18 @@ body {
         margin-bottom: 20px;
         font-size: 26px;
         color: #0fa4a6;
+        animation: letterDraw 1.2s ease forwards;
     }
-    .citas-del-medico thead th{
+    .citas-del-medico thead {
         background: #16C1C8;
-        color: white;
-        padding: 10px;
-        border-radius: 8px;
+        color: #ffffff;
+        align-items: center;
+    }
+    .citas-del-medico tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
     .citas-del-medico tbody td{
         background: #e8ffff;
@@ -1356,6 +1470,93 @@ body {
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
     }
     /**/
+    .citas-pasadas {
+        text-align: center;
+        width: 80%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        animation: fadeIn 1.2s ease-in-out, glowBreath 3.5s ease-in-out infinite;
+        
+    }
+    .citas-pasadas button {
+        margin: 10px;
+        font-size: 12px; 
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .citas-pasadas button:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    .citas-pasadas table{
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+    .citas-pasadas th,
+    .citas-pasadas td{
+        border: 1px solid #ffffff;
+        padding: 5px;
+        text-align: center;
+    }
+    .citas-pasadas td button {
+        margin: 5px;
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+    .citas-pasadas h2 {
+        margin-bottom: 20px;
+        font-size: 26px;
+        color: #0fa4a6;
+        animation: letterDraw 1.4s ease forwards;
+    }
+    .citas-pasadas thead {
+        background: #16C1C8;
+        color: #ffffff;
+        align-items: center;
+    }
+    .citas-pasadas tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .citas-pasadas tbody td{
+        background: #e8ffff;
+        padding: 10px;
+        border-radius: 6px;
+        color: #16C1C8;
+    }
+    .citas-pasadas:hover{
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    /**/
+    .licencia {
+        text-align: center;
+        width: 80%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        animation: fadeIn 1.4s ease-in-out, glowBreath 3.5s ease-in-out infinite;
+    }
     .licencia table{
         width: 100%;
         border-collapse: separate;
@@ -1367,21 +1568,47 @@ body {
         padding: 5px;
         text-align: center;
     }
-    .licencia td button {
+    .licencia td {
         margin: 5px;
         padding: 10px 14px;
         border-radius: 10px;
+    }
+    .licencia button {
+        margin: 10px;
+        font-size: 12px; 
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .licencia button:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
     }
     .licencia h2 {
         margin-bottom: 20px;
         font-size: 26px;
         color: #0fa4a6;
+        animation: letterDraw 1.6s ease forwards;
     }
-    .licencia thead th{
+    .licencia thead {
         background: #16C1C8;
-        color: white;
-        padding: 10px;
-        border-radius: 8px;
+        color: #ffffff;
+        align-items: center;
+    }
+    .licencia tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
     .licencia tbody td{
         background: #e8ffff;
@@ -1401,21 +1628,34 @@ body {
         margin: 5px;
     }
     .seleccionar-paciente:hover{
-        background: #12413d;
         transform: translateY(-3px);
         transition: all 0.3s ease;
     }
     /* LICENCIAS DE MEDICOS */
+    .titulo-soli-licencia {
+        padding: 20px 20px;
+        text-align: center;
+        color: #ffffff;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .titulo-soli-licencia h2 {
+        font-size: 26px;
+        font-weight: 700;
+        animation: letterDraw 0.6s ease forwards;
+    }
     .licencia-medico {
         justify-items: center;
         text-align: center;
         width: 40%;
         margin: 30px auto;
-        padding: 30px;
+        padding: 40px;
         background: #ffffff;
         border-radius: 12px;
         transition: 0.3s ease;
-        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .inicio-licencia, .fin-licencia, .duracion-licencia {
         margin-bottom: 18px;
@@ -1426,15 +1666,16 @@ body {
         margin-bottom: 6px;
         font-weight: 600;
         color: #16C1C8;
+        animation: fadeIn 1.2s ease-in-out;
     }
     .inicio-licencia input, .fin-licencia input, .duracion-licencia input {
-        width: 500px;
-        padding: 10px 14px;
-        border: 1px solid #cfcfcf;
-        border-radius: 10px;
-        font-size: 15px;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        background: transparent;
+        transition: 0.3s;
+        animation: fadeIn 1.4s ease-in-out;
     }
     .inicio-licencia input:focus, .fin-licencia input:focus, .duracion-licencia input:focus {
         border-color: #16C1C8;
@@ -1443,15 +1684,29 @@ body {
     }
     /* ESTILOS DE RECEPCION */
     .encabezado-recepcion{
-        background: #49CCCC;
+        padding: 40px 20px;
+        text-align: center;
         color: #ffffff;
-        text-align: center;    
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);    
+    }
+    .emcabezado-recepcion h1 {
+        animation: letterDraw 0.8s ease forwards;
+    }
+    .encabezado-recepcion p {
+        animation: letterDraw 1s ease forwards;
     }
     /*tabla*/
+    .tabla-pacientes h2 {
+        animation: letterDraw 1.2s ease forwards;
+    }
      .tabla-pacientes table{
         border-collapse: collapse;
         width: 100%;
         margin-top: 20px;
+        animation: fadeIn 1s ease forwards;
     }
     .tabla-pacientes h2 {
         color: #16C1C8;
@@ -1468,6 +1723,12 @@ body {
         color: #ffffff;
         align-items: center;
     }
+    .tabla-pacientes tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
     .tabla-pacientes tbody tr{
         color: #16C1C8;
         background: #ffffff;
@@ -1476,59 +1737,86 @@ body {
         background: #AEE1D3;
     }
     .seleccionar-paciente{
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 5px;
         border-radius: 8px;
         margin: 5px;
     }
     .seleccionar-paciente:hover{
-        background: #12413d;
+        transform: translateY(-3px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
     }
     .actualizar-estado{
-        background: #248a3a;
+        background: linear-gradient(120deg, #4aad3d, #3ed120, #0f8d16, rgb(79, 170, 91));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 5px;
         border-radius: 8px;
         margin: 5px;
     }
     .actualizar-estado:hover{
-        background: #024405;
         transform: translateY(-3px);
         transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(47, 177, 30, 0.4);
     }
     .editar-paciente{
-        background: #d1c372;
+        background: linear-gradient(120deg, #d1c372, #dbc440, #c7b030, rgb(206, 203, 39));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 5px;
         border-radius: 8px;
         margin: 5px;
     }
     .editar-paciente:hover{
-        background: #dadd17;
         transform: translateY(-3px);
         transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(197, 200, 22, 0.4);
     }
     .eliminar-paciente{
-        background: #330505;
+        background: linear-gradient(120deg, #df0c0c, #d64343, #df0c0c, rgb(161, 36, 36));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 5px;
         border-radius: 8px;
         margin: 5px;
     }
     .eliminar-paciente:hover{
-        background: #dd1717;
         transform: translateY(-3px);
         transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(156, 9, 9, 0.4);
     }
     /* AGREGAR PACIENTES */
+    .agregar-paciente-titulo {
+        padding: 40px 20px;
+        text-align: center;
+        color: #ffffff;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);  
+    }
+    .agregar-paciente-titulo h2 {
+        animation: letterDraw 0.8s ease forwards;
+    }
     .agregar-paciente-general {
         max-width: 700px;
-        margin: 20px auto;
-        padding: 30px;
+        margin: auto;
+        padding: 40px;
+        border-radius: 20px;
         background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        position: relative;
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .curp-paciente, .ine-paciente, .nombre-paciente, .direccion-paciente, .edad-paciente, .peso-paciente, .estatura-paciente, .descripcion-paciente {
         margin-bottom: 18px;
@@ -1539,15 +1827,16 @@ body {
         margin-bottom: 6px;
         font-weight: 600;
         color: #16C1C8;
+        animation: fadeIn 1.2s ease-in-out;
     }
     .curp-paciente input, .ine-paciente input, .nombre-paciente input, .direccion-paciente input, .edad-paciente input, .peso-paciente input, .estatura-paciente input, .descripcion-paciente input {
-        width: 500px;
-        padding: 10px 14px;
-        border: 1px solid #cfcfcf;
-        border-radius: 10px;
-        font-size: 15px;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        background: transparent;
+        transition: 0.3s;
+        animation: fadeIn 1.4s ease-in-out;
     }
     .curp-paciente input:focus, .ine-paciente input:focus, .nombre-paciente input:focus, .direccion-paciente input:focus, .edad-paciente input:focus, .peso-paciente input:focus, .estatura-paciente input:focus, .descripcion-paciente input:focus {
         border-color: #16C1C8;
@@ -1583,31 +1872,19 @@ body {
 
     /* hacer una receta medico */
 .bienvenida-medico {
-    align-items: center;
-    background: #49CCCC;
-    color: #ffffff;
-    padding: 18px 25px;
+        padding: 20px 20px;
+        text-align: center;
+        color: #ffffff;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
 }
 
 .bienvenida-medico h2 {
     font-size: 26px;
     font-weight: 700;
-}
-
-.bienvenida-medico button {
-    background: #16C1C8;
-    color: var(--blanco);
-    border: none;
-    padding: 10px 18px;
-    cursor: pointer;
-    font-size: 15px;
-    transition: .2s ease;
-}
-
-.bienvenida-medico button:hover {
-    background: var(--turquesa);
-    color: var(--blanco);
-    transform: translateY(-2px);
+    animation: letterDraw 0.8s ease forwards;
 }
 
 /* CONTENEDOR FORMULARIO */
@@ -1690,30 +1967,41 @@ select:focus {
     }
 }
 /* ESTILOS DE CITA-PACIENTE */
-.encabezado-paginapaciente{
-    align-items: center;
-    text-align: center;
-    background: #49CCCC;
-    color: #ffffff;
-    padding: 18px 25px;
-}
+    .encabezado-paginapaciente{
+        padding: 40px 20px;
+        text-align: center;
+        color: #ffffff;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .encabezado-paginapaciente h1 {
+        animation: letterDraw 0.6s ease forwards;
+    }
+    .encabezado-paginapaciente p {
+        animation: letterDraw 0.8s ease forwards;
+    }
     .boton-añadir {
         margin: 10px;
         font-size: 18px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, letterDraw 1.2s ease forwards;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
-        border-radius: 12px;
-        border: none;
         cursor: pointer;
-        transition: 0.3s;
+        border: 2px solid #11d0d0;
+        border-radius: 14px;
+        transition: .3s ease;
     }
     .boton-añadir:hover{
         transform: translateY(-5px);
         transition: all 0.3s ease;
-        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
+        box-shadow: 0 0 12px #11d0d0, 0 0 22px #11d0d0;
+        border-color: #22f1f1;
     }
 .contenido-paciente {
     margin-top: 25px;
@@ -1731,13 +2019,16 @@ select:focus {
         border-radius: 12px;
         transition: 0.3s ease;
         box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
-        
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .citas-del-paciente button {
         margin: 10px;
         font-size: 12px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1749,7 +2040,6 @@ select:focus {
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
     }
     .citas-del-paciente table{
         width: 100%;
@@ -1771,12 +2061,18 @@ select:focus {
         margin-bottom: 20px;
         font-size: 26px;
         color: #0fa4a6;
+        animation: letterDraw 1.2s ease forwards;
     }
-    .citas-del-paciente thead th{
+    .citas-del-paciente thead {
         background: #16C1C8;
         color: white;
         padding: 10px;
-        border-radius: 8px;
+    }
+    .citas-del-paciente tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
     .citas-del-paciente tbody td{
         background: #e8ffff;
@@ -1798,13 +2094,16 @@ select:focus {
         border-radius: 12px;
         transition: 0.3s ease;
         box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
-        
+        animation: fadeIn 1.8s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .citas-del-paciente-canceladas button {
         margin: 10px;
         font-size: 12px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1816,7 +2115,6 @@ select:focus {
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
     }
     .citas-del-paciente-canceladas table{
         width: 100%;
@@ -1838,12 +2136,18 @@ select:focus {
         margin-bottom: 20px;
         font-size: 26px;
         color: #0fa4a6;
+        animation: letterDraw 2s ease forwards;
     }
-    .citas-del-paciente-canceladas thead th{
+    .citas-del-paciente-canceladas thead {
         background: #16C1C8;
         color: white;
         padding: 10px;
-        border-radius: 8px;
+    }
+    .citas-del-paciente-canceladas tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
     .citas-del-paciente-canceladas tbody td{
         background: #e8ffff;
@@ -1865,13 +2169,16 @@ select:focus {
         border-radius: 12px;
         transition: 0.3s ease;
         box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
-        
+        animation: fadeIn 1.4s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .citas-del-paciente-completadas button {
         margin: 10px;
         font-size: 12px; 
         font-weight: 600;
-        background: #16C1C8;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
         color: #ffffff;
         padding: 12px 20px;
         border-radius: 12px;
@@ -1883,7 +2190,6 @@ select:focus {
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
-        background: #49CCCC;
     }
     .citas-del-paciente-completadas table{
         width: 100%;
@@ -1905,12 +2211,18 @@ select:focus {
         margin-bottom: 20px;
         font-size: 26px;
         color: #0fa4a6;
+        animation: letterDraw 1.6s ease forwards;
     }
-    .citas-del-paciente-completadas thead th{
+    .citas-del-paciente-completadas thead {
         background: #16C1C8;
         color: white;
         padding: 10px;
-        border-radius: 8px;
+    }
+    .citas-del-paciente-completadas tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
     .citas-del-paciente-completadas tbody td{
         background: #e8ffff;
@@ -1924,17 +2236,28 @@ select:focus {
     }
     /* PAGINA AGREGAR CITA ESTILOS */
     .encabezado-citas-agregar{
-        background: #49CCCC;
-        color: #ffffff;
+        padding: 40px 20px;
         text-align: center;
+        color: #ffffff;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .encabezado-citas-agregar h1 {
+        animation: letterDraw 0.6s ease forwards;
+    }
+    .encabezado-citas-agregar h2 {
+        animation: letterDraw 0.8s ease forwards;
     }
     .agregar-medico-general {
         max-width: 700px;
-        margin: 20px auto;
-        padding: 30px;
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        margin: auto;
+        padding: 35px;
+        border-radius: 20px;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
     }
     .curp-cita, .medico-cita, .fecha-cita, .horario-cita, .turno-cita {
         margin-bottom: 18px;
@@ -1946,27 +2269,84 @@ select:focus {
         font-weight: 600;
         color: #16C1C8;
     }
-    .curp-cita input, .medico-cita input, .fecha-cita input, .horario-cita input, .turno-cita input {
-        width: 500px;
-        padding: 10px 14px;
-        border: 1px solid #cfcfcf;
-        border-radius: 10px;
-        font-size: 15px;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
+    .curp-cita input, .fecha-cita input {
+        width: 100%;
+        padding: 10px 12px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        background: transparent;
+        transition: 0.3s;
+        animation: fadeIn 1.4s ease-in-out;
     }
-    .curp-cita input, .medico-cita input, .fecha-cita input, .horario-cita input, .turno-cita input {
+    .medico-cita select, .horario-cita select, .turno-cita select {
+        padding: 12px;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: fadeIn 1.4s ease-in-out, gradientMove 3s infinite;
+    }
+    .medico-cita select:focus, .horario-cita select:focus, .turno-cita select:focus {
+        transform: scale(1.01);
+        padding: 12px;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: gradientMove 3s infinite, fadeIn 1.4s ease-in-out;
+    }
+    .curp-cita input:focus .fecha-cita input:focus {
         border-color: #16C1C8;
         box-shadow: 0 0 8px rgba(22, 193, 200, 0.3);
         outline: none;
     }
     /*pagina receta*/
     .encabezado-recetas{
-        background: #49CCCC;
-        color: #ffffff;
+        padding: 20px 10px;
         text-align: center;
+        color: #ffffff;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .encabezado-recetas h1 {
+        animation: letterDraw 0.8s ease forwards;
+        font-size: 50px;
+        padding: 5px;
+        text-align: center;
+        color: #ffffff;
+    }
+    .encabezado-recetas h3 {
+        animation: letterDraw 1s ease forwards;
+        font-size: 20px;
+        padding: 10px;
+        text-align: center;
+        color: #ffffff;
     }
     /* ESTILOS RECETA */
+    .receta-edit {
+        margin: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+        color:  #ffffff;
+        text-align: center;
+        padding: 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+    }
+    .receta-edit:hover{
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.75);
+    }
     .tabla-receta {
         text-align: center;
         width: 80%;
@@ -1976,7 +2356,7 @@ select:focus {
         border-radius: 12px;
         transition: 0.3s ease;
         box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
-        
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .tabla-receta table{
         width: 100%;
@@ -1994,11 +2374,16 @@ select:focus {
         font-size: 26px;
         color: #0fa4a6;
     }
-    .tabla-receta thead th{
+    .tabla-receta thead {
         background: #16C1C8;
-        color: white;
-        padding: 10px;
-        border-radius: 8px;
+        color: #ffffff;
+        align-items: center;
+    }
+    .tabla-receta tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
     .tabla-receta tbody td{
         background: #e8ffff;
@@ -2019,6 +2404,7 @@ select:focus {
         border-radius: 12px;
         transition: 0.3s ease;
         box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        animation: fadeIn 1.2s ease-in-out, glowBreath 3.5s ease-in-out infinite;
         
     }
     .tabla-receta-detalles table{
@@ -2037,11 +2423,16 @@ select:focus {
         font-size: 26px;
         color: #0fa4a6;
     }
-    .tabla-receta-detalles thead th{
+    .tabla-receta-detalles thead {
         background: #16C1C8;
-        color: white;
-        padding: 10px;
-        border-radius: 8px;
+        color: #ffffff;
+        align-items: center;
+    }
+    .tabla-receta-detalles tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
     .tabla-receta-detalles tbody td{
         background: #e8ffff;
@@ -2057,12 +2448,20 @@ select:focus {
     .encabezado {
         font-size: 20px;
         padding: 40px 20px;
-        background: #49CCCC;
         text-align: center;
         color: #ffffff;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
     }
-    .parte-para-actualizar {
-        justify-items: center;
+    .encabezado h1 {
+        animation: letterDraw 0.8s ease forwards;
+    }
+    .encabezado p {
+        animation: letterDraw 1s ease forwards;
+    }
+    .cuadrito {
         text-align: center;
         width: 40%;
         margin: 30px auto;
@@ -2071,6 +2470,55 @@ select:focus {
         border-radius: 12px;
         transition: 0.3s ease;
         box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
+    }
+    .cuadrito h2 {
+        margin-bottom: 10px;
+        font-size: 26px;
+        color: #0fa4a6;
+        animation: letterDraw 1.2s ease forwards;
+    }
+    .cuadrito p {
+        padding: 5px;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 100% 100%;
+        animation: fadeIn 1.4s ease-in-out, gradientMove 3s infinite;
+    }
+    .cuadrito button {
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #50aeb3, #12e0e7, rgb(156, 223, 223));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate, fadeIn 1.6s ease-in-out;
+        filter: blur(0.5px);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .cuadrito button:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    .parte-para-actualizar {
+        justify-items: center;
+        text-align: center;
+        width: 40%;
+        margin: 30px auto;
+        padding: 30px;
+        max-width: 700px;
+        padding: 40px;
+        border-radius: 20px;
+        background: #ffffff;
+        position: relative;
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
     }
     .edit-estado-paciente {
         margin-bottom: 18px;
@@ -2081,15 +2529,16 @@ select:focus {
         margin-bottom: 6px;
         font-weight: 600;
         color: #16C1C8;
+        animation: letterDraw 1s ease forwards;
     }
     .edit-estado-paciente input {
         width: 500px;
-        padding: 10px 14px;
-        border: 1px solid #cfcfcf;
-        border-radius: 10px;
-        font-size: 15px;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
+        padding: 10px 12px;
+        border: none;
+        border-bottom: 2px solid #ccc;
+        background: transparent;
+        transition: 0.3s;
+        animation: fadeIn 1.4s ease-in-out;
     }
     .edit-estado-paciente input:focus {
         border-color: #16C1C8;
@@ -2119,4 +2568,346 @@ select:focus {
         transform: translateY(-5px);
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(22, 193, 200, 0.75);
+    }
+    /* SURTIR RECETA ALONDRA DEJAME DECORAR LO OTRO AGUSTO TRYHARD DE MIE- */
+    .titulo-receta {
+        font-size: 18px;
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+        color:  #ffffff;
+        text-align: center;
+        padding: 20px;
+        border: none;
+        cursor: pointer;
+    }
+    .titulo-receta h1 {
+        font-size: 3em;
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        opacity: 0;
+        animation: letterDraw 1s ease forwards;
+    }
+    .titulo-receta p {
+        font-weight: 700;
+        color: #fff;
+        margin: 0;
+        opacity: 0;
+        animation: letterDraw 1.2s ease forwards;
+    }
+    /**/
+    .tablita-datos-de-receta {
+        text-align: center;
+        width: 60%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        animation: fadeIn 1s ease-in-out, glowBreath 3.5s ease-in-out infinite;
+    }
+    .tablita-datos-de-receta button {
+        margin: 10px;
+        font-size: 12px; 
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .tablita-datos-de-receta button:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    .tablita-datos-de-receta table{
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+    .tablita-datos-de-receta th,
+    .tablita-datos-de-receta td{
+        border: 1px solid #ffffff;
+        padding: 5px;
+        text-align: center;
+    }
+    .tablita-datos-de-receta td button {
+        margin: 5px;
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+    .tablita-datos-de-receta h2 {
+        margin-bottom: 20px;
+        font-size: 26px;
+        color: #0fa4a6;
+        animation: letterDraw 1.2s ease forwards;
+    }
+    .tablita-datos-de-receta thead {
+        background: #16C1C8;
+        color: #ffffff;
+        align-items: center;
+    }
+    .tablita-datos-de-receta tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .tablita-datos-de-receta tbody td{
+        background: #e8ffff;
+        padding: 10px;
+        border-radius: 6px;
+        color: #16C1C8;
+    }
+    .tablita-datos-de-receta:hover{
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    /**/
+    
+    .tablita-medicamentos-en-receta button {
+        margin: 10px;
+        font-size: 12px; 
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .tablita-medicamentos-en-receta button:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    .tablita-medicamentos-en-receta table{
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+    .tablita-medicamentos-en-receta th,
+    .tablita-medicamentos-en-receta td{
+        border: 1px solid #ffffff;
+        padding: 5px;
+        text-align: center;
+    }
+    .tablita-medicamentos-en-receta td button {
+        margin: 5px;
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+    .tablita-medicamentos-en-receta h2 {
+        margin-bottom: 20px;
+        font-size: 26px;
+        color: #0fa4a6;
+        animation: letterDraw 1.6s ease forwards;
+    }
+    .tablita-medicamentos-en-receta thead {
+        background: #16C1C8;
+        color: #ffffff;
+        align-items: center;
+    }
+    .tablita-medicamentos-en-receta tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .tablita-medicamentos-en-receta tbody td{
+        background: #e8ffff;
+        padding: 10px;
+        border-radius: 6px;
+        color: #16C1C8;
+    }
+    /**/
+    .tablita-contenedor-venta {
+        text-align: center;
+        width: 60%;
+        margin: 30px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 12px;
+        transition: 0.3s ease;
+        box-shadow: 0 4px 12px rgba(22, 193, 200, 0.75);
+        animation: fadeIn 1.4s ease-in-out, glowBreath 3.5s ease-in-out infinite;
+    }
+    .tablita-contenedor-venta button {
+        margin: 10px;
+        font-size: 12px; 
+        font-weight: 600;
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 5s ease infinite alternate;
+        filter: blur(0.5px);
+        color: #ffffff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .tablita-contenedor-venta button:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    .tablita-contenedor-venta table{
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+    .tablita-contenedor-venta th,
+    .tablita-contenedor-venta td{
+        border: 1px solid #ffffff;
+        padding: 5px;
+        text-align: center;
+    }
+    .tablita-contenedor-venta td button {
+        margin: 5px;
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+    .tablita-contenedor-venta h2 {
+        margin-bottom: 20px;
+        font-size: 26px;
+        color: #0fa4a6;
+        animation: letterDraw 1.6s ease forwards;
+    }
+    .tablita-contenedor-venta h3 {
+        margin-bottom: 20px;
+        font-size: 26px;
+        color: #ddb815;
+        animation: letterDraw 1.8s ease forwards;
+    }
+    .tablita-contenedor-venta thead {
+        background: #16C1C8;
+        color: #ffffff;
+        align-items: center;
+    }
+    .tablita-contenedor-venta tr {
+        background: linear-gradient(120deg, #7CD7CF, #1ca8af, #16C1C8, rgb(87, 161, 161));
+        background-size: 300% 300%;
+        animation: auroraMove 10s ease infinite alternate;
+        filter: blur(0.5px);
+    }
+    .tablita-contenedor-venta tbody td{
+        background: #e8ffff;
+        padding: 10px;
+        border-radius: 6px;
+        color: #16C1C8;
+    }
+    .tablita-contenedor-venta:hover{
+        transform: scale(1.02);
+        box-shadow: 0 8px 20px rgba(22, 193, 200, 0.4);
+    }
+    /*estilos login*/
+    .login-body {
+    background: radial-gradient(circle at top, #0bd3d3, #003a3a 60%);
+    background-size: 150% 150%;
+    animation: bgShift 10s ease infinite;
+    }
+    @keyframes bgShift {
+        0% { background-position: 0 0; }
+        50% { background-position: 100% 100%; }
+        100% { background-position: 0 0; }
+    }
+    .login-container {
+        width: 360px;
+        padding: 40px 30px;
+        background: rgba(255, 255, 255, 0.87);
+        border: 1px solid #00f7ff;
+        box-shadow: 0 0 18px #00eaff;
+        border-radius: 12px;
+        margin: 80px auto;
+        animation: appear 0.8s ease-out, glowBreath 3.5s ease-in-out infinite;
+    }
+    @keyframes appear {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .login-container h2 {
+        color: #00faff;
+        text-align: center;
+    }
+    .lobtn input {
+        width: 100%;
+        margin-top: -10px;
+        margin-bottom: 10px;
+        padding: 12px;
+        background: transparent;
+        border: 1px solid #00eaff;
+        border-radius: 8px;
+        outline: none;
+        transition: 0.3s;
+    }
+    .lobtn input:focus {
+        box-shadow: 0 0 12px #00eaff;
+    }
+    .btn-login {
+        margin-top: 25px;
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(120deg, #7CD7CF, #50aeb3, #12e0e7, rgb(156, 223, 223));
+            background-size: 300% 300%;
+            animation: auroraMove 10s ease infinite alternate, fadeIn 1s ease-in-out;
+            filter: blur(0.5px);
+            color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+/*pagina de registro*/
+    .register-body {
+        background: radial-gradient(circle at top, #0bd3d3, #003a3a 60%);
+        background-size: 150% 150%;
+        animation: bgShift 10s ease infinite;
+    }
+    .register-container {
+        width: 360px;
+        padding: 40px 30px;
+        background: rgba(255, 255, 255, 0.87);
+        border: 1px solid #00f7ff;
+        box-shadow: 0 0 18px #00eaff;
+        border-radius: 12px;
+        margin: 80px auto;
+        animation: appear 0.8s ease-out, glowBreath 3.5s ease-in-out infinite;
+    }
+    .register-container h2 {
+        color: #00faff;
+        text-align: center;
+    }
+    .lobtn select {
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: gradientMove 3s infinite;
+    }
+    .lobtn select:focus {
+        transform: scale(1.01);
+        padding: 12px;
+        border-radius: 10px;
+        border: 3px solid transparent;
+        background: linear-gradient(#fff, #fff) padding-box,
+                    linear-gradient(120deg,#00eaff,#78f5d6,#00ffaa) border-box;
+        background-size: 200% 200%;
+        animation: gradientMove 3s infinite;
     }
